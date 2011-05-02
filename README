@@ -1,0 +1,21 @@
+
+This program is an implementation of the Lispkit described in the 
+book "FUNCTIONAL PROGRAMMING: Application and Implementation", by
+Peter Henderson, ISBN 0-13-331579-7.
+
+If you have a C compiler and make, like gcc and gmake, you can
+ build the program with:
+
+  make
+
+To run lispkit, where [function] is the name of a file containing
+lispkit source code:
+
+  ./lispkit compiler.code [function]
+
+There are some example functions in the tests directory, these
+came from the tables 12.1 and 12.2 in the book. 
+
+  ./lispkit compiler.code tests/lk-test-01
+
+
