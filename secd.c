@@ -39,13 +39,11 @@ Object *environ;
 Object *control;
 Object *dump;
 
-Object *true;
-Object *false;
-Object *nil;
+Object *_true;
+Object *_false;
+Object *_nil;
 
 Object *work;
-
-Object *strings;
 
 static int stopped = 0;
 
@@ -58,11 +56,12 @@ void ldc() {
 void ld() {
   int i = 0;
   work    = environ;
-  for (i = 1; i <= number_value(car(car(cdr(control)))); i++) {
+
+  for (i = 1; i <= number_value(car(car(cdr(control)))); ++i) {
     work = cdr(work);
   }
   work    = car(work);
-  for (i = 1; i <= number_value(cdr(car(cdr(control)))); i++) {
+  for (i = 1; i <= number_value(cdr(car(cdr(control)))); ++i) {
     work = cdr(work);
   }
   work    = car(work);
@@ -82,9 +81,9 @@ void _cdr() {
 
 void atom() {
   if (is_number(car(stack)) || is_symbol(car(stack))) {
-    stack = cons(true, cdr(stack));
+    stack = cons(_true, cdr(stack));
   } else {
-    stack = cons(false, cdr(stack));
+    stack = cons(_false, cdr(stack));
   }
   control = cdr(control);
 }
@@ -121,9 +120,9 @@ void rem() {
 
 void leq() {
   if (number_value(car(cdr(stack))) <= number_value(car(stack))) {
-    stack = cons(true, cdr(cdr(stack)));
+    stack = cons(_true, cdr(cdr(stack)));
   } else {
-    stack = cons(false, cdr(cdr(stack)));
+    stack = cons(_false, cdr(cdr(stack)));
   }
   control = cdr(control);
 }
@@ -131,9 +130,9 @@ void leq() {
 void eq() {
   if ((is_symbol(car(stack)) && is_symbol(car(cdr(stack))) && (strcmp(string_value(car(stack)), string_value(car(cdr(stack)))) == 0)) ||
     (is_number(car(stack)) && is_number(car(cdr(stack))) && number_value(car(stack)) == number_value(car(cdr(stack))))) {
-    stack = cons(true, cdr(cdr(stack)));
+    stack = cons(_true, cdr(cdr(stack)));
   } else {
-    stack = cons(false, cdr(cdr(stack)));
+    stack = cons(_false, cdr(cdr(stack)));
   }
   control = cdr(control);
 }
@@ -151,7 +150,7 @@ void rtn() {
 }
 
 void dum() {
-  environ = cons(nil, environ);
+  environ = cons(_nil, environ);
   control = cdr(control);
 }
 
@@ -160,12 +159,12 @@ void rap() {
   environ      = cdr(car(stack));
   environ->Cons.car = car(cdr(stack));
   control      = car(car(stack));
-  stack        = nil;
+  stack        = _nil;
 }
 
 void sel() {
   dump = cons(cdr(cdr(cdr(control))),dump);
-  if (strcmp(string_value(car(stack)), string_value(true)) == 0) {
+  if (strcmp(string_value(car(stack)), string_value(_true)) == 0) {
     control = car(cdr(control));
   } else {
     control = car(cdr(cdr(control)));
@@ -182,7 +181,7 @@ void ap() {
   dump    = cons(cdr(cdr(stack)),cons(environ,cons(cdr(control), dump)));
   environ = cons(car(cdr(stack)),cdr(car(stack)));
   control = car(car(stack));
-  stack   = nil;
+  stack   = _nil;
 }
 
 void _stop() {
@@ -214,22 +213,29 @@ OpCode op_code[] = {
   _stop
 };
 
+Object * execute(Object *fn, Object *args) {
+  int        cycle_count = 1;
 
-
-Object * execute(Object *fn, Object *args)
-{
-
-  stack      = cons(args, nil);
-  environ    = nil;
+  stack      = cons(args, _nil);
+  /*stack      = args;*/
+  environ    = _nil;
   control    = fn;
-  dump       = nil;
+  dump       = _nil;
 
   stopped = 0;
 
 cycle:
 
+  /*printf("STACK: "); print(stack);  printf("\n");*/
+#if 0
+  printf("%03d S: ", cycle_count); print(stack);   printf("\n");
+  printf("%03d E: ", cycle_count); print(environ);   printf("\n");
+  printf("%03d C: ", cycle_count); print(control); printf("\n");
+  printf("%03d W: ", cycle_count); print(work); printf("\n");
+#endif
   op_code[number_value(car(control))]();
 
+  cycle_count++;
   if (!stopped) goto cycle;
 
   return stack;
@@ -239,17 +245,15 @@ void init() {
 
   gc_init();
 
-  true     = symbol("T");
-  false    = symbol("F");
-  nil      = symbol("NIL");
+  _true     = symbol("T");
+  _false    = symbol("F");
+  _nil      = symbol("NIL");
 
-  stack    = nil;
-  control  = nil;
-  environ  = nil;
-  dump     = nil;
+  stack    = _nil;
+  control  = _nil;
+  environ  = _nil;
+  dump     = _nil;
 
-  work     = nil;
-
-  strings  = nil;
+  work     = _nil;
 }
 

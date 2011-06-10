@@ -1,1 +1,1 @@
-( LETREC X ( X QUOTE A ))
+( LETREC X ( X QUOTE A ) )

@@ -1,111 +1,106 @@
-/*
-  A Lispkit Lisp implementation.
-
-  Copyright (c) 2011  A. Carl Douglas
-
-  Permission is hereby granted, free of charge, to any person obtaining
-  a copy of this software and associated documentation files (the
-  "Software"), to deal in the Software without restriction, including
-  without limitation the rights to use, copy, modify, merge, publish,
-  distribute, sublicense, and/or sell copies of the Software, and to
-  permit persons to whom the Software is furnished to do so, subject to
-  the following conditions:
-
-  The above copyright notice and this permission notice shall be included
-  in all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- */
-/* vim: softtabstop=2 shiftwidth=2 expandtab  */
-
 #include <stdio.h>
-#include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
-#include <assert.h>
+#include <ctype.h>
+#include <stdlib.h>
 
 #include "lispkit.h"
-#include "gc.h"
 
-#define issyntax(c) (c == '(' || c == ')' || c == '.')
+/*
+ * <s-exp> ::= <atom> | (<s-exp list>)
+ * <s-exp list> ::= <s-exp> | <s-exp> . <s-exp> | <s-exp> <s-exp list>
+ */
 
-Object * scan(FILE *fp) {
-  Object * obj = nil;
-  char     buffer[80];
-  char *   ptr = buffer;
-  int      ch  = EOF;
-  *ptr = '\0';
-  ch = getc(fp);
-  while(isspace(ch)) {
-    ch = getc(fp);
+extern void scanner(void);
+extern struct Token token;
+
+enum { T_SYMBOL = 1, T_NUMBER = 2, T_DOT = 3, T_LEFTPAREN = 4, T_RIGHTPAREN = 5, T_END };
+
+char *type_str(int type) {
+  switch(type) {
+    case T_SYMBOL: return "symbol";
+    case T_NUMBER: return "number";
+    case T_DOT: return "dot";
+    case T_LEFTPAREN: return "left paren";
+    case T_RIGHTPAREN: return "right paren";
   }
-  while(!isspace(ch) && !feof(fp)) {
-    *ptr++ = ch;
-    ch = getc(fp);
-    if ((isalnum(buffer[0]) && issyntax(ch)) || (issyntax(buffer[0]) && isalnum(ch))) {
-      fseeko(fp, -1, SEEK_CUR);
+  return "unknown";
+}
+
+int token_type(void) {
+  if (token.token == NULL) return T_END;
+  switch(token.token[0]) {
+    case '.': return T_DOT;
+    case '(': return T_LEFTPAREN;
+    case ')': return T_RIGHTPAREN;
+    case '0': 
+    case '1': 
+    case '2': 
+    case '3': 
+    case '4': 
+    case '5': 
+    case '6': 
+    case '7': 
+    case '8': 
+    case '9': return T_NUMBER;
+    default:  return T_SYMBOL;
+  }
+}
+
+void match(int type) {
+  if (type != token_type()) {
+    printf("Error - expected %d %s , got '%s'\n", 
+        token_type(), type_str(token_type()), token.token);
+    printf("Line %d, word %d\n", token.line, token.word);
+    exit(-1);
+  }
+  scanner();
+}
+
+Object * s_exp(void) {
+  Object *cell = _nil;
+  switch(token_type()) {
+    case T_NUMBER:
+      cell = number(atoi(token.token));
+      match(T_NUMBER);
       break;
-    }
+    case T_SYMBOL:
+      cell = symbol(token.token);
+      match(T_SYMBOL);
+      break;
+    case T_LEFTPAREN:
+      match(T_LEFTPAREN);
+      cell = s_exp_list();
+      match(T_RIGHTPAREN);
+      break;
+    case T_END:
+      break;
+    default: 
+      printf("%s:%d error, did not expect type %d %s\n", 
+          __FILE__, __LINE__, token_type(), type_str(token_type()));
+      exit(-1);
   }
-  *ptr = '\0';
-  if (strlen(buffer) == 0) goto done;
-  obj = symbol(buffer);
-done:
-  return obj;
+  return cell;
 }
 
-void push(Object **stack, Object *obj) {
-  if (*stack == nil)
-    *stack = cons(obj, nil);
-  else
-    *stack = cons(obj, *stack);
-}
+Object * s_exp_list(void) {
+  Object *cell = _nil;
 
-Object *pop(Object **stack) {
-  Object *obj = nil;
-  if (*stack == nil) return nil;
-  obj         = car(*stack);
-  *stack      = cdr(*stack);
-  return obj;
-}
+  cell = cons(s_exp(), _nil);
 
-Object * read_expr(FILE *fp) {
-  Object * stack1 = nil;
-  Object * stack2 = nil;
-  Object * sexpr  = nil;
-  Object * obj    = nil;
-  int ch = EOF;
-  while(!feof(fp)) {
-    obj = scan(fp); if (obj == nil) break;
-    push(&stack1, obj);
+  switch(token_type()) {
+    case T_RIGHTPAREN:
+      break;
+    case T_DOT:
+      match(T_DOT);
+      cell->Cons.cdr = s_exp();
+      break;
+    case T_END:
+      break;
+    default:
+      cell->Cons.cdr = s_exp_list();
+      break;
   }
-  while((obj = pop(&stack1)) != nil) {
-    ch = string_value(obj)[0];
-    if (isalpha(ch)) {
-      sexpr = cons(obj, sexpr);
-    } else if (isdigit(ch)) {
-      obj = number(atoi(string_value(obj)));
-      sexpr = cons(obj, sexpr);
-    } else if (ch == '(') {
-      sexpr = cons(sexpr, pop(&stack2));
-    } else if (ch == ')') {
-      push(&stack2, sexpr);
-      sexpr = nil;
-    } else if (ch == '.') {
-      obj = pop(&stack1);
-      ch = string_value(obj)[0];
-      if (isdigit(ch))
-        obj = number(atoi(string_value(obj)));
-      sexpr = cons(obj, car(sexpr));
-    }
-  }
-  return sexpr;
-}
 
+  return cell;
+}
 

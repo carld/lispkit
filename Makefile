@@ -7,7 +7,10 @@ CFLAGS += -ansi
 CFLAGS += -g 
 CFLAGS += -ggdb 
 
-SRC     = gc.c secd.c lispkit.c parser.c print.c 
+SRC     = gc.c secd.c lispkit.c print.c 
+SRC    += parser.c
+SRC    += intern.c
+SRC    += tokenizer.c
 SRC    += main.c
 OBJ     = $(SRC:.c=.o)
 BIN     = lispkit
@@ -23,5 +26,8 @@ $(BIN): $(OBJ)
 clean:
 	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o 
 
-.PHONY: clean default all 
+test:
+	./test.sh
+
+.PHONY: clean all test
 

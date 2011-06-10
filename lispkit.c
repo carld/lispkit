@@ -33,34 +33,12 @@
 #include "lispkit.h"
 #include "gc.h"
 
+
 Object * object_alloc() {
   return gc_alloc(sizeof(Object));
 }
 
-const char * intern_string(char *string) {
-  char * buffer = 0;
-  Object * obj = nil;
-
-  for (obj = strings; obj != nil; obj = cdr(obj)) {
-    if (strcmp(string, string_value(car(obj))) == 0) {
-      return string_value(car(obj));
-    }
-  }
-
-  buffer = gc_alloc(strlen(string)+1);
-  strcpy(buffer, string);
-
-  obj    = object_alloc();
-  gc_header(obj)->type = STRING;
-  obj->String.string   = buffer;
-
-  strings = cons(obj, strings);
-
-  return string_value(car(strings));
-}
-
-Object * cons(Object *_car, Object *_cdr)
-{
+Object * cons(Object *_car, Object *_cdr) {
   Object *obj = object_alloc();
   gc_header(obj)->type = CONS;
   obj->Cons.car = _car;
@@ -70,8 +48,9 @@ Object * cons(Object *_car, Object *_cdr)
 
 Object * car(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("Not a cons object (car)\n");
+    printf("Not a cons object (car): ");
     print(obj);
+    puts("");
     exit(-1);
   }
   return obj->Cons.car;
@@ -79,8 +58,9 @@ Object * car(Object *obj) {
 
 Object * cdr(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("Not a cons object (cdr)\n");
+    printf("Not a cons object (cdr): ");
     print(obj);
+    puts("");
     exit(-1);
   }
   return obj->Cons.cdr;
@@ -117,10 +97,14 @@ int is_cons(Object *obj) {
 }
 
 const char * string_value(Object *obj) {
+  static char buffer[64];
   switch (gc_header(obj)->type) {
     case STRING: return obj->String.string;
     case SYMBOL: return obj->Symbol.symbol;
+    case NUMBER: printf("converting number to string...\n");
+                 snprintf(buffer, 64, "%d", number_value(obj)); return buffer;
   }
+  printf("bad string value");
   exit(-1);
   return NULL;
 }

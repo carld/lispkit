@@ -44,7 +44,7 @@ void trace() {
 }
 
 void print(Object *obj) {
-  if (!obj || obj == nil) return;
+  if (!obj || obj == _nil) return;
 
   if (gc_header(obj)->type == NUMBER) {
     printf("%ld ", obj->Number.number);
@@ -53,7 +53,7 @@ void print(Object *obj) {
   } else if (gc_header(obj)->type == CONS) {
     if (gc_header(car(obj))->type != CONS &&
         gc_header(cdr(obj))->type != CONS &&
-        cdr(obj) != nil) {
+        cdr(obj) != _nil) {
       print(car(obj));
       printf(". ");
       print(cdr(obj));

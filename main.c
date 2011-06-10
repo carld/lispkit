@@ -27,10 +27,9 @@
 #include <string.h>
 
 #include "lispkit.h"
+#include "gc.h"
 
-const char help[] = 
-  "  lispkit [compiler] [file] \n"
-  ;
+const char help[] = "  lispkit [compiler] [file] \n";
 
 int main(int argc, char *argv[]) {
   int arg = 1;
@@ -65,12 +64,14 @@ int main(int argc, char *argv[]) {
 
   init();
 
-  fn = nil; args = nil; result = nil;
+  fn = _nil; args = _nil; result = _nil;
 
-  fn     = read_expr(fp_fn);
-  args   = read_expr(fp_args);
-  result = execute(car(fn), args);
+  fn = get_exp(fp_fn);
+  args = get_exp_list(fp_args);
 
+  result = execute(fn, args);
+
+  printf("Printing results...\n");
   print(result); printf("\n");
 
   fclose(fp_fn);
@@ -78,4 +79,5 @@ int main(int argc, char *argv[]) {
 
   return 0;
 }
+
 

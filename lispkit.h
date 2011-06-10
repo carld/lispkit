@@ -29,19 +29,20 @@
 union Object;
 typedef union Object Object;
 
-enum { NUMBER, SYMBOL, CONS, STRING };
+enum { NUMBER = 1, SYMBOL = 2, CONS = 3, STRING = 4, LIST = 5 };
 
 struct String { const char *string; };
 struct Number { long number; };
 struct Symbol { const char *symbol; };
 struct Cons   { Object *car; Object *cdr; };
-
+struct Pair   { Object *l; Object *r; };
 
 union Object {
   struct Number Number;
   struct Symbol Symbol;
   struct Cons   Cons;
   struct String String;
+  struct Pair   Pair;
 };
 
 extern Object *stack;
@@ -49,13 +50,11 @@ extern Object *environ;
 extern Object *control;
 extern Object *dump;
 
-extern Object *true;
-extern Object *false;
-extern Object *nil;
+extern Object *_true;
+extern Object *_false;
+extern Object *_nil;
 
 extern Object *work;
-
-extern Object *strings;
 
 Object * cons(Object *, Object *);
 Object * car(Object *);
@@ -72,11 +71,24 @@ int is_symbol(Object *);
 int is_atom(Object *);
 
 void init();
-Object * read_expr(FILE *);
 Object * execute(Object *fn, Object *args);
 
+const char * intern_string(char *string);
+
 void print(Object *);
-void trace();
+
+struct Token {
+  char * file;
+  char * token;
+  unsigned line;
+  unsigned word;
+};
+
+void scanner(void);
+Object * s_exp(void);
+Object * s_exp_list(void);
+Object * get_exp(FILE *);
+Object * get_exp_list(FILE *);
 
 enum {
   OP_LD   =  1,

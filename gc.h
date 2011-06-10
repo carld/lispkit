@@ -29,13 +29,14 @@
 struct GCHeader {
   int size;
   int type;
-
   int marked;
+  int id;
 };
 
 void gc_init();
 void * gc_alloc(int size);
 void gc_collect();
+void gc_graph();
 
 #define gc_header(o)  ((struct GCHeader *)o - 1)
 

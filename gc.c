@@ -25,20 +25,37 @@
 /* vim: softtabstop=2 shiftwidth=2 expandtab  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 #include "lispkit.h"
 #include "gc.h"
 
-void gc_init() {
+#define cells      262144
+#define cell_size  sizeof(struct GCHeader) + 32
+#define mem_size   cells * cell_size
 
+unsigned char mem[mem_size];
+
+static unsigned char *next_cell = mem;
+
+void gc_init() {
+  memset(mem, 0, mem_size);
 }
 
 void * gc_alloc(int size) {
-  struct GCHeader *gc_object = (struct GCHeader *)
-    malloc(sizeof(struct GCHeader) + size);
+  struct GCHeader *gc_object = 0;
+  static unsigned _id = 0;
 
-  if (gc_object == NULL) {
-    fprintf(stderr, "out of memory, %s:%d\n", __FILE__, __LINE__);
+  assert(size < 256); 
+
+  gc_object = (struct GCHeader *) next_cell;
+  gc_object->id = _id++;
+
+  next_cell += cell_size;
+
+  if (next_cell > (mem + mem_size)) {
+    fprintf(stderr, "out of memory, %s:%d (id = %u)\n", __FILE__, __LINE__, _id);
     exit(-1);
   }
 
@@ -48,5 +65,44 @@ void * gc_alloc(int size) {
 
 void gc_collect() {
 
+}
+
+#if 0
+void gc_graph_objects(FILE *fp, Object *obj) {
+    switch (gc_object->type) {
+      case CONS:    fprintf(fp, "cell%d [label=\"<f0> car|<f1> cdr\"];", gc_object->id); break;
+      case SYMBOL:  fprintf(fp, "cell%d,[label=\"<f0> %s\"];", gc_object->id, object->Symbol.symbol); break;
+      case NUMBER:  fprintf(fp, "cell%d,[label=\"<f0> %ld\"];", gc_object->id, object->Number.number); break;
+    }
+}
+#endif
+
+void gc_graph(FILE *fp, Object *_obj) {
+#if 0
+  int cell;
+
+  printf("Graphing....\n");
+
+  fprintf(fp, 
+      "digraph gc {\n"
+      "  node [shape=record]\n"
+    );
+
+  for(cell = 0; cell < cells; cell++) {
+    struct GCHeader *gc_object = 0;
+    Object *object      = 0;
+    gc_object = (struct GCHeader *) mem + (cell * (sizeof (struct GCHeader) + 256));
+    object = (Object *) (gc_object + 1);
+    if (gc_object->type == CONS) {
+      fprintf(fp, "cell%d:f0 -> cell%d:f0\n", gc_object->id, gc_header(object->Cons.car)->id);
+      fprintf(fp, "cell%d:f0 -> cell%d:f0\n", gc_object->id, gc_header(object->Cons.cdr)->id);
+    }
+  }
+
+  fprintf(fp, 
+      "}\n"
+    );
+  printf("Graph done!\n");
+#endif
 }
 

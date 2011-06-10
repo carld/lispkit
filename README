@@ -11,11 +11,10 @@ If you have a C compiler and make, like gcc and gmake, you can
 To run lispkit, where [function] is the name of a file containing
 lispkit source code:
 
-  ./lispkit compiler.code [function]
+  ./lispkit compiler.ascii [function]
 
 There are some example functions in the tests directory, these
 came from the tables 12.1 and 12.2 in the book. 
 
-  ./lispkit compiler.code tests/lk-test-01
-
+  ./test.sh
 
