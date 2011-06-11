@@ -51,11 +51,15 @@ void gc_mark(Object * object) {
 }
 
 void gc_init() {
-  int i;
   const unsigned cell_size = sizeof(struct GCHeader) + sizeof(Object);
   unsigned char *ptr;
+  unsigned num_cells = NUM_CELLS;
+  int i;
+  
+  num_cells = getenv("LISPKIT_MEMORY") ? 
+    atoi(getenv("LISPKIT_MEMORY")) : NUM_CELLS;
 
-  mem = calloc(NUM_CELLS, cell_size);
+  mem = calloc(num_cells, cell_size);
 
   alloc_counter = 0;
   collect_counter = 0;

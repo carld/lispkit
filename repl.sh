@@ -1,11 +1,11 @@
 #! /bin/bash
 
-while read -p '> ' line;
+while echo "enter program (ctrl-d to finish)" && read -p '> ' line;
 do
   echo $line | ./lispkit compiler.ascii > .compiled
   cat .compiled
   if [[ ${PIPESTATUS[1]} -eq 0 ]]; then
-    echo "enter arguments"
+    echo "now enter argument"
     read -p '> ' args
     echo $args | ./lispkit .compiled
     rm .compiled
@@ -13,6 +13,7 @@ do
 done
 
 echo
+echo "Thanks for playing!"
 
 exit 0
 
