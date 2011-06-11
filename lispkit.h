@@ -29,20 +29,16 @@
 union Object;
 typedef union Object Object;
 
-enum { NUMBER = 1, SYMBOL = 2, CONS = 3, STRING = 4, LIST = 5 };
+enum { NUMBER = 1, SYMBOL = 2, CONS = 3 };
 
-struct String { const char *string; };
 struct Number { long number; };
 struct Symbol { const char *symbol; };
 struct Cons   { Object *car; Object *cdr; };
-struct Pair   { Object *l; Object *r; };
 
 union Object {
   struct Number Number;
   struct Symbol Symbol;
   struct Cons   Cons;
-  struct String String;
-  struct Pair   Pair;
 };
 
 extern Object *stack;
@@ -85,8 +81,7 @@ struct Token {
 };
 
 void scanner(void);
-Object * s_exp(void);
-Object * s_exp_list(void);
+void tokenize(FILE *);
 Object * get_exp(FILE *);
 Object * get_exp_list(FILE *);
 

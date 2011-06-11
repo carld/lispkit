@@ -30,19 +30,6 @@
 #include "lispkit.h"
 #include "gc.h"
 
-void trace() {
-  printf("s: "); print(stack);
-  printf("\n");
-  printf("e: "); print(environ);
-  printf("\n");
-  printf("c: "); print(control);
-  printf("\n");
-  printf("d: "); print(dump);
-  printf("\n");
-  printf("w: "); print(work);
-  printf("\n");
-}
-
 void print(Object *obj) {
   if (!obj || obj == _nil) return;
 

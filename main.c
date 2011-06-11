@@ -66,16 +66,17 @@ int main(int argc, char *argv[]) {
 
   fn = _nil; args = _nil; result = _nil;
 
-  fn = get_exp(fp_fn);
+  fn   = get_exp(fp_fn);
   args = get_exp_list(fp_args);
 
   result = execute(fn, args);
 
-  printf("Printing results...\n");
   print(result); printf("\n");
 
   fclose(fp_fn);
   fclose(fp_args);
+
+  gc_exit();
 
   return 0;
 }

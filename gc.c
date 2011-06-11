@@ -31,78 +31,101 @@
 #include "lispkit.h"
 #include "gc.h"
 
-#define cells      262144
-#define cell_size  sizeof(struct GCHeader) + 32
-#define mem_size   cells * cell_size
+#define NUM_CELLS    16384
 
-unsigned char mem[mem_size];
+unsigned alloc_counter;
+unsigned collect_counter;
 
-static unsigned char *next_cell = mem;
+void * mem;
+Object *cells[NUM_CELLS];
+Object *ff;
 
-void gc_init() {
-  memset(mem, 0, mem_size);
+void gc_mark(Object * object) {
+  if (gc_header(object)->marked == 0) {
+    gc_header(object)->marked = 1;
+    if (is_atom(object) == 0) {
+      gc_mark(car(object));
+      gc_mark(cdr(object));
+    } 
+  }
 }
 
-void * gc_alloc(int size) {
-  struct GCHeader *gc_object = 0;
+void gc_init() {
+  int i;
+  const unsigned cell_size = sizeof(struct GCHeader) + sizeof(Object);
+  unsigned char *ptr;
+
+  mem = calloc(NUM_CELLS, cell_size);
+
+  alloc_counter = 0;
+  collect_counter = 0;
+
+  ff = NULL;
+
+  for(i = 0, ptr = mem; i < NUM_CELLS; i++, ptr += cell_size) {
+    cells[i] = (Object *) ((struct GCHeader *)ptr + 1);
+    cells[i]->Cons.cdr = ff;
+    ff = cells[i];
+  }
+}
+
+void gc_exit() {
+  free(mem);
+}
+
+Object * gc_alloc() {
+  Object * object;
   static unsigned _id = 0;
 
-  assert(size < 256); 
-
-  gc_object = (struct GCHeader *) next_cell;
-  gc_object->id = _id++;
-
-  next_cell += cell_size;
-
-  if (next_cell > (mem + mem_size)) {
-    fprintf(stderr, "out of memory, %s:%d (id = %u)\n", __FILE__, __LINE__, _id);
-    exit(-1);
+  if (ff == NULL) {
+    gc_collect_garbage();
   }
+  object = ff;
+  ff = ff->Cons.cdr;
+  gc_header(object)->type = 0; 
+  gc_header(object)->id   = _id;
+  
+  alloc_counter++;
 
-  gc_object->size = size;
-  return (void *)(gc_object + 1);
+  return object;
 }
 
 void gc_collect() {
+  int i;
+  for (i = 0; i < NUM_CELLS; i++ ) {
+    if (gc_header(cells[i])->marked == 0) {
+      cells[i]->Cons.cdr = ff;
+      ff = cells[i];
 
-}
-
-#if 0
-void gc_graph_objects(FILE *fp, Object *obj) {
-    switch (gc_object->type) {
-      case CONS:    fprintf(fp, "cell%d [label=\"<f0> car|<f1> cdr\"];", gc_object->id); break;
-      case SYMBOL:  fprintf(fp, "cell%d,[label=\"<f0> %s\"];", gc_object->id, object->Symbol.symbol); break;
-      case NUMBER:  fprintf(fp, "cell%d,[label=\"<f0> %ld\"];", gc_object->id, object->Number.number); break;
-    }
-}
-#endif
-
-void gc_graph(FILE *fp, Object *_obj) {
-#if 0
-  int cell;
-
-  printf("Graphing....\n");
-
-  fprintf(fp, 
-      "digraph gc {\n"
-      "  node [shape=record]\n"
-    );
-
-  for(cell = 0; cell < cells; cell++) {
-    struct GCHeader *gc_object = 0;
-    Object *object      = 0;
-    gc_object = (struct GCHeader *) mem + (cell * (sizeof (struct GCHeader) + 256));
-    object = (Object *) (gc_object + 1);
-    if (gc_object->type == CONS) {
-      fprintf(fp, "cell%d:f0 -> cell%d:f0\n", gc_object->id, gc_header(object->Cons.car)->id);
-      fprintf(fp, "cell%d:f0 -> cell%d:f0\n", gc_object->id, gc_header(object->Cons.cdr)->id);
+      collect_counter++;
     }
   }
+}
 
-  fprintf(fp, 
-      "}\n"
-    );
-  printf("Graph done!\n");
-#endif
+void gc_collect_garbage() {
+  int i;
+  for (i = 0; i < NUM_CELLS; i++ ) {
+    gc_header(cells[i])->marked = 0;
+  }
+  gc_mark(stack);
+  gc_mark(environ);
+  gc_mark(control);
+  gc_mark(dump);
+  gc_mark(work);
+  gc_mark(_true);
+  gc_mark(_false);
+  gc_mark(_nil);
+
+  gc_collect();
+
+  if (ff == NULL) {
+    printf("out of memory: %s", __func__);
+    exit(-1);
+  }
+}
+
+void gc_stats() {
+  printf("allocated: %u\n", alloc_counter);
+  printf("collected: %u\n", collect_counter);
 }
 

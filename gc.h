@@ -34,9 +34,12 @@ struct GCHeader {
 };
 
 void gc_init();
-void * gc_alloc(int size);
+Object * gc_alloc();
+void gc_collect_garbage();
 void gc_collect();
-void gc_graph();
+void gc_mark();
+void gc_exit();
+void gc_stats();
 
 #define gc_header(o)  ((struct GCHeader *)o - 1)
 

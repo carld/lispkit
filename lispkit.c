@@ -35,7 +35,7 @@
 
 
 Object * object_alloc() {
-  return gc_alloc(sizeof(Object));
+  return gc_alloc();
 }
 
 Object * cons(Object *_car, Object *_cdr) {
@@ -48,20 +48,16 @@ Object * cons(Object *_car, Object *_cdr) {
 
 Object * car(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("Not a cons object (car): ");
-    print(obj);
-    puts("");
-    exit(-1);
+    printf("Not a cons object (car): \n");
+    abort();
   }
   return obj->Cons.car;
 }
 
 Object * cdr(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("Not a cons object (cdr): ");
-    print(obj);
-    puts("");
-    exit(-1);
+    printf("Not a cons object (cdr): \n");
+    abort();
   }
   return obj->Cons.cdr;
 }
@@ -99,7 +95,6 @@ int is_cons(Object *obj) {
 const char * string_value(Object *obj) {
   static char buffer[64];
   switch (gc_header(obj)->type) {
-    case STRING: return obj->String.string;
     case SYMBOL: return obj->Symbol.symbol;
     case NUMBER: printf("converting number to string...\n");
                  snprintf(buffer, 64, "%d", number_value(obj)); return buffer;

@@ -217,7 +217,6 @@ Object * execute(Object *fn, Object *args) {
   int        cycle_count = 1;
 
   stack      = cons(args, _nil);
-  /*stack      = args;*/
   environ    = _nil;
   control    = fn;
   dump       = _nil;
@@ -226,13 +225,6 @@ Object * execute(Object *fn, Object *args) {
 
 cycle:
 
-  /*printf("STACK: "); print(stack);  printf("\n");*/
-#if 0
-  printf("%03d S: ", cycle_count); print(stack);   printf("\n");
-  printf("%03d E: ", cycle_count); print(environ);   printf("\n");
-  printf("%03d C: ", cycle_count); print(control); printf("\n");
-  printf("%03d W: ", cycle_count); print(work); printf("\n");
-#endif
   op_code[number_value(car(control))]();
 
   cycle_count++;
@@ -242,7 +234,6 @@ cycle:
 }
 
 void init() {
-
   gc_init();
 
   _true     = symbol("T");

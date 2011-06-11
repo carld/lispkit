@@ -1,3 +1,28 @@
+/*
+  A Lispkit Lisp implementation.
+
+  Copyright (c) 2011  A. Carl Douglas
+
+  Permission is hereby granted, free of charge, to any person obtaining
+  a copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
+
+  The above copyright notice and this permission notice shall be included
+  in all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -10,8 +35,10 @@
  * <s-exp list> ::= <s-exp> | <s-exp> . <s-exp> | <s-exp> <s-exp list>
  */
 
-extern void scanner(void);
 extern struct Token token;
+
+Object *s_exp();
+Object *s_exp_list();
 
 enum { T_SYMBOL = 1, T_NUMBER = 2, T_DOT = 3, T_LEFTPAREN = 4, T_RIGHTPAREN = 5, T_END };
 
@@ -32,15 +59,15 @@ int token_type(void) {
     case '.': return T_DOT;
     case '(': return T_LEFTPAREN;
     case ')': return T_RIGHTPAREN;
-    case '0': 
-    case '1': 
-    case '2': 
-    case '3': 
-    case '4': 
-    case '5': 
-    case '6': 
-    case '7': 
-    case '8': 
+    case '0':
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
     case '9': return T_NUMBER;
     default:  return T_SYMBOL;
   }
@@ -48,7 +75,7 @@ int token_type(void) {
 
 void match(int type) {
   if (type != token_type()) {
-    printf("Error - expected %d %s , got '%s'\n", 
+    printf("Error - expected %d %s , got '%s'\n",
         token_type(), type_str(token_type()), token.token);
     printf("Line %d, word %d\n", token.line, token.word);
     exit(-1);
@@ -74,8 +101,8 @@ Object * s_exp(void) {
       break;
     case T_END:
       break;
-    default: 
-      printf("%s:%d error, did not expect type %d %s\n", 
+    default:
+      printf("%s:%d error, did not expect type %d %s\n",
           __FILE__, __LINE__, token_type(), type_str(token_type()));
       exit(-1);
   }
@@ -102,5 +129,21 @@ Object * s_exp_list(void) {
   }
 
   return cell;
+}
+
+Object * get_exp(FILE *fp) {
+  Object *exp;
+  tokenize(fp);
+  scanner();
+  exp = s_exp();
+  return exp;
+}
+
+Object * get_exp_list(FILE *fp) {
+  Object *exp;
+  tokenize(fp);
+  scanner();
+  exp = s_exp_list();
+  return exp;
 }
 
