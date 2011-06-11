@@ -30,7 +30,9 @@
 
 #include "lispkit.h"
 
-char *token_stack[65535];
+#define MAX_TOKENS  16384
+
+char *token_stack[MAX_TOKENS];
 int cur_tok;
 
 unsigned linen, wordn;
@@ -50,7 +52,7 @@ void tokenize (FILE *fp) {
   int i;
 
   cur_tok = 0;
-  for (i = 0; i < 65535; i++) {
+  for (i = 0; i < MAX_TOKENS; i++) {
     token_stack[i] = NULL;
   }
   linen = 0;
@@ -62,6 +64,10 @@ void tokenize (FILE *fp) {
     for (tok=strtok(line, sep); tok; tok=strtok(NULL,sep)) {
       token_stack[stacki++] = strdup(tok);
       wordn++;
+      if (stacki >= MAX_TOKENS) {
+        printf("out of token space\n");
+        exit(-1);
+      }
     }
   }
 
