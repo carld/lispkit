@@ -24,6 +24,9 @@ $(BIN): $(OBJ)
 	$(CC) -o $@ $^  $(LDFLAGS)
 	@size $(BIN)
 
+%.o: %.lisp
+	./$(BIN) compiler.ascii $< | tee $@
+
 clean:
 	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o
 
