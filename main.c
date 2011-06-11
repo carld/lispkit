@@ -29,7 +29,7 @@
 #include "lispkit.h"
 #include "gc.h"
 
-const char help[] = "  lispkit [compiler] [file] \n";
+const char help[] = "  lispkit [compiler] [file|--] \n";
 
 int main(int argc, char *argv[]) {
   int arg = 1;

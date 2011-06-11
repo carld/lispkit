@@ -105,6 +105,10 @@ const char * string_value(Object *obj) {
 }
 
 int number_value(Object *obj) {
+  if (gc_header(obj)->type != NUMBER) {
+    printf("object is not a number\n");
+    exit(-1);
+  }
   return obj->Number.number;
 }
 

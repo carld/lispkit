@@ -28,7 +28,7 @@ $(BIN): $(OBJ)
 	./$(BIN) compiler.ascii $< | tee $@
 
 clean:
-	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o
+	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o examples/*.o
 
 test:
 	./test.sh
