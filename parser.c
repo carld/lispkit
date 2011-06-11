@@ -49,6 +49,7 @@ char *type_str(int type) {
     case T_DOT: return "dot";
     case T_LEFTPAREN: return "left paren";
     case T_RIGHTPAREN: return "right paren";
+    case T_END: return "EOF";
   }
   return "unknown";
 }
@@ -76,7 +77,7 @@ int token_type(void) {
 void match(int type) {
   if (type != token_type()) {
     printf("Error - expected %d %s , got '%s'\n",
-        token_type(), type_str(token_type()), token.token);
+        type, type_str(type), token.token);
     printf("Line %d, word %d\n", token.line, token.word);
     exit(-1);
   }
