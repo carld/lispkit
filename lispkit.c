@@ -48,7 +48,7 @@ Object * cons(Object *_car, Object *_cdr) {
 
 Object * car(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("object error (car): \n");
+    printf("car error\n");
     exit(-1);
   }
   return obj->Cons.car;
@@ -56,7 +56,7 @@ Object * car(Object *obj) {
 
 Object * cdr(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("object error (cdr): \n");
+    printf("cdr error\n");
     exit(-1);
   }
   return obj->Cons.cdr;
