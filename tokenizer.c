@@ -76,3 +76,14 @@ void tokenize (FILE *fp) {
   }
 }
 
+void tokenizer_free(void) {
+  int i;
+  for (i = 0; i < MAX_TOKENS; i++) {
+    if (token_stack[i] != NULL) {
+      free(token_stack[i]);
+    }
+    token_stack[i] = NULL;
+  }
+}
+
+

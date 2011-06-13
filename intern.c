@@ -25,8 +25,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+static const char * pstringz[32768] = { NULL };
+
 const char * intern_string(char *string) {
-  static const char * pstringz[32768] = { NULL };
   const char ** ptr;
 
   for (ptr = pstringz; *ptr != NULL; ptr++) {
@@ -38,5 +39,15 @@ const char * intern_string(char *string) {
   *ptr = strdup(string);
 
   return *ptr;
+}
+
+void intern_free(void) {
+  const char ** ptr;
+
+  for (ptr = pstringz; *ptr != NULL; ptr++) {
+    if (*ptr != NULL) {
+      free((void*)*ptr);
+    }
+  }
 }
 

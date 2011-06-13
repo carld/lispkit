@@ -70,6 +70,7 @@ void init();
 Object * execute(Object *fn, Object *args);
 
 const char * intern_string(char *string);
+void intern_free(void);
 
 void print(Object *);
 
@@ -82,6 +83,8 @@ struct Token {
 
 void scanner(void);
 void tokenize(FILE *);
+void tokenizer_free(void);
+
 Object * get_exp(FILE *);
 Object * get_exp_list(FILE *);
 

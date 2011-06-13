@@ -77,6 +77,7 @@ int main(int argc, char *argv[]) {
   fclose(fp_args);
 
   gc_exit();
+  intern_free();
 
   return 0;
 }

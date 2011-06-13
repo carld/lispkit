@@ -137,6 +137,7 @@ Object * get_exp(FILE *fp) {
   tokenize(fp);
   scanner();
   exp = s_exp();
+  tokenizer_free();
   return exp;
 }
 
@@ -145,6 +146,7 @@ Object * get_exp_list(FILE *fp) {
   tokenize(fp);
   scanner();
   exp = s_exp_list();
+  tokenizer_free();
   return exp;
 }
 
