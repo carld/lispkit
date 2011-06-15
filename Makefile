@@ -8,6 +8,7 @@ CFLAGS += -pedantic
 CFLAGS += -ansi
 CFLAGS += -g
 CFLAGS += -ggdb
+CFLAGS += -D_BSD_SOURCE
 
 SRC     = gc.c secd.c lispkit.c print.c
 SRC    += parser.c
