@@ -1,5 +1,7 @@
 # vim: tabstop=8 noexpandtab
 
+SOURCE_ID  := $(shell date +%Y%m%d)
+
 CC      = gcc
 CFLAGS += -Wall
 CFLAGS += -pedantic
@@ -33,5 +35,8 @@ clean:
 test:
 	./test.sh
 
-.PHONY: clean all test
+archive:
+	git archive --prefix=lispkit-$(SOURCE_ID)/ HEAD | gzip > lispkit-$(SOURCE_ID).tar.gz
+
+.PHONY: clean all test archive
 
