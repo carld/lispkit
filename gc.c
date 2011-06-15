@@ -111,11 +111,11 @@ void gc_collect_garbage() {
   for (i = 0; i < NUM_CELLS; i++ ) {
     gc_header(cells[i])->marked = 0;
   }
-  gc_mark(stack);
-  gc_mark(environ);
-  gc_mark(control);
-  gc_mark(dump);
-  gc_mark(work);
+  gc_mark(_stack);
+  gc_mark(_environ);
+  gc_mark(_control);
+  gc_mark(_dump);
+  gc_mark(_work);
   gc_mark(_true);
   gc_mark(_false);
   gc_mark(_nil);

@@ -41,16 +41,16 @@ union Object {
   struct Cons   Cons;
 };
 
-extern Object *stack;
-extern Object *environ;
-extern Object *control;
-extern Object *dump;
+extern Object *_stack;
+extern Object *_environ;
+extern Object *_control;
+extern Object *_dump;
 
 extern Object *_true;
 extern Object *_false;
 extern Object *_nil;
 
-extern Object *work;
+extern Object *_work;
 
 Object * cons(Object *, Object *);
 Object * car(Object *);

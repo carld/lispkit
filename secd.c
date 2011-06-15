@@ -34,154 +34,154 @@
 
 typedef void (*OpCode) (void);
 
-Object *stack;
-Object *environ;
-Object *control;
-Object *dump;
+Object *_stack;
+Object *_environ;
+Object *_control;
+Object *_dump;
 
 Object *_true;
 Object *_false;
 Object *_nil;
 
-Object *work;
+Object *_work;
 
 static int stopped = 0;
 
 
-void ldc() {
-  stack   = cons(car(cdr(control)), stack);
-  control = cdr(cdr(control));
+void _ldc() {
+  _stack   = cons(car(cdr(_control)), _stack);
+  _control = cdr(cdr(_control));
 }
 
-void ld() {
+void _ld() {
   int i = 0;
-  work    = environ;
+  _work    = _environ;
 
-  for (i = 1; i <= number_value(car(car(cdr(control)))); ++i) {
-    work = cdr(work);
+  for (i = 1; i <= number_value(car(car(cdr(_control)))); ++i) {
+    _work = cdr(_work);
   }
-  work    = car(work);
-  for (i = 1; i <= number_value(cdr(car(cdr(control)))); ++i) {
-    work = cdr(work);
+  _work    = car(_work);
+  for (i = 1; i <= number_value(cdr(car(cdr(_control)))); ++i) {
+    _work = cdr(_work);
   }
-  work    = car(work);
-  stack   = cons(work, stack);
-  control = cdr(cdr(control));
+  _work    = car(_work);
+  _stack   = cons(_work, _stack);
+  _control = cdr(cdr(_control));
 }
 
 void _car() {
-  stack   = cons(car(car(stack)), cdr(stack));
-  control = cdr(control);
+  _stack   = cons(car(car(_stack)), cdr(_stack));
+  _control = cdr(_control);
 }
 
 void _cdr() {
-  stack   = cons(cdr(car(stack)), cdr(stack));
-  control = cdr(control);
+  _stack   = cons(cdr(car(_stack)), cdr(_stack));
+  _control = cdr(_control);
 }
 
-void atom() {
-  if (is_number(car(stack)) || is_symbol(car(stack))) {
-    stack = cons(_true, cdr(stack));
+void _atom() {
+  if (is_number(car(_stack)) || is_symbol(car(_stack))) {
+    _stack = cons(_true, cdr(_stack));
   } else {
-    stack = cons(_false, cdr(stack));
+    _stack = cons(_false, cdr(_stack));
   }
-  control = cdr(control);
+  _control = cdr(_control);
 }
 
 void _cons() {
-  stack   = cons(cons(car(stack),car(cdr(stack))),cdr(cdr(stack)));
-  control = cdr(control);
+  _stack   = cons(cons(car(_stack),car(cdr(_stack))),cdr(cdr(_stack)));
+  _control = cdr(_control);
 }
 
-void sub() {
-  stack   = cons(number(number_value(car(cdr(stack))) - number_value(car(stack))),cdr(cdr(stack)));
-  control = cdr(control);
+void _sub() {
+  _stack   = cons(number(number_value(car(cdr(_stack))) - number_value(car(_stack))),cdr(cdr(_stack)));
+  _control = cdr(_control);
 }
 
-void add() {
-  stack   = cons(number(number_value(car(cdr(stack))) + number_value(car(stack))),cdr(cdr(stack)));
-  control = cdr(control);
+void _add() {
+  _stack   = cons(number(number_value(car(cdr(_stack))) + number_value(car(_stack))),cdr(cdr(_stack)));
+  _control = cdr(_control);
 }
 
-void mul() {
-  stack   = cons(number(number_value(car(cdr(stack))) * number_value(car(stack))),cdr(cdr(stack)));
-  control = cdr(control);
+void _mul() {
+  _stack   = cons(number(number_value(car(cdr(_stack))) * number_value(car(_stack))),cdr(cdr(_stack)));
+  _control = cdr(_control);
 }
 
 void _div() {
-  stack   = cons(number(number_value(car(cdr(stack))) / number_value(car(stack))),cdr(cdr(stack)));
-  control = cdr(control);
+  _stack   = cons(number(number_value(car(cdr(_stack))) / number_value(car(_stack))),cdr(cdr(_stack)));
+  _control = cdr(_control);
 }
 
-void rem() {
-  stack   = cons(number(number_value(car(cdr(stack))) % number_value(car(stack))),cdr(cdr(stack)));
-  control = cdr(control);
+void _rem() {
+  _stack   = cons(number(number_value(car(cdr(_stack))) % number_value(car(_stack))),cdr(cdr(_stack)));
+  _control = cdr(_control);
 }
 
-void leq() {
-  if (number_value(car(cdr(stack))) <= number_value(car(stack))) {
-    stack = cons(_true, cdr(cdr(stack)));
+void _leq() {
+  if (number_value(car(cdr(_stack))) <= number_value(car(_stack))) {
+    _stack = cons(_true, cdr(cdr(_stack)));
   } else {
-    stack = cons(_false, cdr(cdr(stack)));
+    _stack = cons(_false, cdr(cdr(_stack)));
   }
-  control = cdr(control);
+  _control = cdr(_control);
 }
 
-void eq() {
-  if ((is_symbol(car(stack)) && is_symbol(car(cdr(stack))) && (strcmp(string_value(car(stack)), string_value(car(cdr(stack)))) == 0)) ||
-    (is_number(car(stack)) && is_number(car(cdr(stack))) && number_value(car(stack)) == number_value(car(cdr(stack))))) {
-    stack = cons(_true, cdr(cdr(stack)));
+void _eq() {
+  if ((is_symbol(car(_stack)) && is_symbol(car(cdr(_stack))) && (strcmp(string_value(car(_stack)), string_value(car(cdr(_stack)))) == 0)) ||
+    (is_number(car(_stack)) && is_number(car(cdr(_stack))) && number_value(car(_stack)) == number_value(car(cdr(_stack))))) {
+    _stack = cons(_true, cdr(cdr(_stack)));
   } else {
-    stack = cons(_false, cdr(cdr(stack)));
+    _stack = cons(_false, cdr(cdr(_stack)));
   }
-  control = cdr(control);
+  _control = cdr(_control);
 }
 
-void ldf() {
-  stack = cons(cons(car(cdr(control)), environ), stack);
-  control = cdr(cdr(control));
+void _ldf() {
+  _stack = cons(cons(car(cdr(_control)), _environ), _stack);
+  _control = cdr(cdr(_control));
 }
 
-void rtn() {
-  stack   = cons(car(stack), car(dump));
-  environ = car(cdr(dump));
-  control = car(cdr(cdr(dump)));
-  dump    = cdr(cdr(cdr(dump)));
+void _rtn() {
+  _stack   = cons(car(_stack), car(_dump));
+  _environ = car(cdr(_dump));
+  _control = car(cdr(cdr(_dump)));
+  _dump    = cdr(cdr(cdr(_dump)));
 }
 
-void dum() {
-  environ = cons(_nil, environ);
-  control = cdr(control);
+void _dum() {
+  _environ = cons(_nil, _environ);
+  _control = cdr(_control);
 }
 
-void rap() {
-  dump         = cons(cdr(cdr(stack)), cons(cdr(environ), cons(cdr(control),dump)));
-  environ      = cdr(car(stack));
-  environ->Cons.car = car(cdr(stack));
-  control      = car(car(stack));
-  stack        = _nil;
+void _rap() {
+  _dump         = cons(cdr(cdr(_stack)), cons(cdr(_environ), cons(cdr(_control),_dump)));
+  _environ      = cdr(car(_stack));
+  _environ->Cons.car = car(cdr(_stack));
+  _control      = car(car(_stack));
+  _stack        = _nil;
 }
 
-void sel() {
-  dump = cons(cdr(cdr(cdr(control))),dump);
-  if (strcmp(string_value(car(stack)), string_value(_true)) == 0) {
-    control = car(cdr(control));
+void _sel() {
+  _dump = cons(cdr(cdr(cdr(_control))),_dump);
+  if (strcmp(string_value(car(_stack)), string_value(_true)) == 0) {
+    _control = car(cdr(_control));
   } else {
-    control = car(cdr(cdr(control)));
+    _control = car(cdr(cdr(_control)));
   }
-  stack   = cdr(stack);
+  _stack   = cdr(_stack);
 }
 
-void join() {
-  control = car(dump);
-  dump    = cdr(dump);
+void _join() {
+  _control = car(_dump);
+  _dump    = cdr(_dump);
 }
 
-void ap() {
-  dump    = cons(cdr(cdr(stack)),cons(environ,cons(cdr(control), dump)));
-  environ = cons(car(cdr(stack)),cdr(car(stack)));
-  control = car(car(stack));
-  stack   = _nil;
+void _ap() {
+  _dump    = cons(cdr(cdr(_stack)),cons(_environ,cons(cdr(_control), _dump)));
+  _environ = cons(car(cdr(_stack)),cdr(car(_stack)));
+  _control = car(car(_stack));
+  _stack   = _nil;
 }
 
 void _stop() {
@@ -190,47 +190,45 @@ void _stop() {
 
 OpCode op_code[] = {
   0,
-  ld,
-  ldc,
-  ldf,
-  ap,
-  rtn,
-  dum,
-  rap,
-  sel,
-  join,
+  _ld,
+  _ldc,
+  _ldf,
+  _ap,
+  _rtn,
+  _dum,
+  _rap,
+  _sel,
+  _join,
   _car,
   _cdr,
-  atom,
+  _atom,
   _cons,
-  eq,
-  add,
-  sub,
-  mul,
+  _eq,
+  _add,
+  _sub,
+  _mul,
   _div,
-  rem,
-  leq,
+  _rem,
+  _leq,
   _stop
 };
 
 Object * execute(Object *fn, Object *args) {
-  int        cycle_count = 1;
 
-  stack      = cons(args, _nil);
-  environ    = _nil;
-  control    = fn;
-  dump       = _nil;
+  _stack      = cons(args, _nil);
+  _environ    = _nil;
+  _control    = fn;
+  _dump       = _nil;
 
   stopped = 0;
 
 cycle:
 
-  op_code[number_value(car(control))]();
+  op_code[number_value(car(_control))]();
 
-  cycle_count++;
   if (!stopped) goto cycle;
 
-  return stack;
+  return _stack;
 }
 
 void init() {
@@ -240,11 +238,11 @@ void init() {
   _false    = symbol("F");
   _nil      = symbol("NIL");
 
-  stack    = _nil;
-  control  = _nil;
-  environ  = _nil;
-  dump     = _nil;
+  _stack    = _nil;
+  _control  = _nil;
+  _environ  = _nil;
+  _dump     = _nil;
 
-  work     = _nil;
+  _work     = _nil;
 }
 
