@@ -88,29 +88,5 @@ void tokenizer_free(void);
 Object * get_exp(FILE *);
 Object * get_exp_list(FILE *);
 
-enum {
-  OP_LD   =  1,
-  OP_LDC  =  2,
-  OP_LDF  =  3,
-  OP_AP   =  4,
-  OP_RTN  =  5,
-  OP_DUM  =  6,
-  OP_RAP  =  7,
-  OP_SEL  =  8,
-  OP_JOIN =  9,
-  OP_CAR  = 10,
-  OP_CDR  = 11,
-  OP_ATOM = 12,
-  OP_CONS = 13,
-  OP_EQ   = 14,
-  OP_ADD  = 15,
-  OP_SUB  = 16,
-  OP_MUL  = 17,
-  OP_DIV  = 18,
-  OP_REM  = 19,
-  OP_LEQ  = 20,
-  OP_STOP = 21
-};
-
 #endif
 
