@@ -35,15 +35,10 @@
 char *token_stack[MAX_TOKENS];
 int cur_tok;
 
-unsigned linen, wordn;
-
 struct Token token;
 
 void scanner(void) {
-  extern struct Token token;
   token.token = token_stack[cur_tok++];
-  token.line  = linen;
-  token.word  = wordn;
 }
 
 void tokenize (FILE *fp) {
@@ -55,15 +50,15 @@ void tokenize (FILE *fp) {
   for (i = 0; i < MAX_TOKENS; i++) {
     token_stack[i] = NULL;
   }
-  linen = 0;
+  token.line = 0;
   while( fgets(line, 255, fp) ) {
     const char sep[] = " \n\r\t";
     char *tok;
-    wordn = 1;
-    linen++;
+    token.word = 1;
+    token.line++;
     for (tok=strtok(line, sep); tok; tok=strtok(NULL,sep)) {
       token_stack[stacki++] = strdup(tok);
-      wordn++;
+      token.word++;
       if (stacki >= MAX_TOKENS) {
         printf("out of token space\n");
         exit(-1);
