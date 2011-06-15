@@ -8,13 +8,29 @@ If you have a C compiler and make, like gcc and gmake, you can
 
   make
 
-To run lispkit, where [function] is the name of a file containing
-lispkit source code:
+If compilation is successful, you can test lispkit - this will 
+attempt some of the examples from table 12.1 and 12.2 in the book.
 
-  ./lispkit compiler.ascii [function]
+  make test
 
-There are some example functions in the tests directory, these
-came from the tables 12.1 and 12.2 in the book. 
+To compile a lispkit program, where [filename] is the name of 
+a file containing lispkit source code:
 
-  ./test.sh
+  ./lispkit compiler.ascii [filename]
+
+To compile one of the examples, examples/square.lisp:
+
+  make examples/square.o
+
+You should see some output like:
+
+  ( 3 ( 1 ( 0 . 0 ) 1 ( 0 . 0 ) 17 5 ) 4 21 )
+
+Then run it, with no second argument lispkit will read the input
+from stdin. Type a number e.g. 9, press enter, then ctrl-d, and
+the result will be printed to stdout:
+
+  ./lispkit examples/square.o
+  9
+  81
 
