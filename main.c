@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 #include "lispkit.h"
 #include "gc.h"
@@ -34,47 +35,36 @@ const char help[] = "  lispkit [compiler] [file|--] \n";
 int main(int argc, char *argv[]) {
   int arg = 1;
 
-  FILE * fp_fn   = NULL;
-  FILE * fp_args = stdin;
+  FILE * fp[2];
 
   Object *fn, *args, *result;
 
   if (argc < 2) {
     puts(help); 
-    return(-1);
+    exit(-1);
   }
 
-  if (arg < argc) {
-    fp_fn = fopen(argv[arg], "ra");
-    if (fp_fn == NULL) {
-      printf("Could not load '%s'\n", argv[arg]);
-      return(-1);
-    }
-    arg++;
-  }
-
-  if (arg < argc) {
-    fp_args = fopen(argv[arg], "ra");
-    if (fp_args == NULL) {
-      printf("Could not load '%s'\n", argv[arg]);
-      return(-1);
+  for(arg = 1; arg < argc; arg++) {
+    fp[arg-1] = fopen(argv[arg], "ra");
+    if (fp[arg-1] == NULL || ferror(fp[arg-1]) != 0) {
+      printf("Could not load '%s' %s\n", argv[arg], strerror(errno));
+      exit(-1);
     }
   }
-
 
   init();
 
   fn = _nil; args = _nil; result = _nil;
 
-  fn   = get_exp(fp_fn);
-  args = get_exp_list(fp_args);
+  fn   = get_exp(fp[0]);
+  args = get_exp_list(fp[1]);
 
   result = execute(fn, args);
 
   print(result); printf("\n");
 
-  fclose(fp_fn);
-  fclose(fp_args);
+  fclose(fp[0]);
+  fclose(fp[1]);
 
   gc_exit();
   intern_free();
