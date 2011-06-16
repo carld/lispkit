@@ -32,8 +32,8 @@ typedef union Object Object;
 enum { NUMBER = 1, SYMBOL = 2, CONS = 3 };
 
 struct Number { long number; };
-struct Symbol { const char *symbol; };
-struct Cons   { Object *car; Object *cdr; };
+struct Symbol { const char * symbol; };
+struct Cons   { Object * car; Object * cdr; };
 
 union Object {
   struct Number Number;
@@ -41,16 +41,16 @@ union Object {
   struct Cons   Cons;
 };
 
-extern Object *_stack;
-extern Object *_environ;
-extern Object *_control;
-extern Object *_dump;
+extern Object * _stack;
+extern Object * _environ;
+extern Object * _control;
+extern Object * _dump;
 
-extern Object *_true;
-extern Object *_false;
-extern Object *_nil;
+extern Object * _true;
+extern Object * _false;
+extern Object * _nil;
 
-extern Object *_work;
+extern Object * _work;
 
 Object * cons(Object *, Object *);
 Object * car(Object *);
