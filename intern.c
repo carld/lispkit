@@ -22,13 +22,16 @@
   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/* vim: softtabstop=2 shiftwidth=2 expandtab  */
 #include <stdlib.h>
 #include <string.h>
 
-static const char * pstringz[32768] = { NULL };
+static const char *pstringz[32768] = {NULL};
 
-const char * intern_string(char *string) {
-  const char ** ptr;
+const char     *
+intern_string(char *string)
+{
+  const char    **ptr;
 
   for (ptr = pstringz; *ptr != NULL; ptr++) {
     if (strcmp(*ptr, string) == 0) {
@@ -41,13 +44,14 @@ const char * intern_string(char *string) {
   return *ptr;
 }
 
-void intern_free(void) {
-  const char ** ptr;
+void 
+intern_free(void)
+{
+  const char    **ptr;
 
   for (ptr = pstringz; *ptr != NULL; ptr++) {
     if (*ptr != NULL) {
-      free((void*)*ptr);
+      free((void *) *ptr);
     }
   }
 }
-

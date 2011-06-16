@@ -22,6 +22,7 @@
   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/* vim: softtabstop=2 shiftwidth=2 expandtab  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

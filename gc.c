@@ -33,54 +33,62 @@
 
 #define NUM_CELLS    16384
 
-unsigned alloc_counter;
-unsigned collect_counter;
+unsigned        alloc_counter;
+unsigned        collect_counter;
 
-void * mem;
-Object **cells;
-Object *ff;
+void           *mem;
+Object        **cells;
+Object         *ff;
 
-void gc_mark(Object * object) {
+void 
+gc_mark(Object * object)
+{
   if (gc_header(object)->marked == 0) {
     gc_header(object)->marked = 1;
     if (is_atom(object) == 0) {
       gc_mark(car(object));
       gc_mark(cdr(object));
-    } 
+    }
   }
 }
 
-void gc_init() {
-  const unsigned cell_size = sizeof(struct GCHeader) + sizeof(Object);
-  unsigned char *ptr;
-  unsigned num_cells;
-  int i;
-  
-  num_cells = getenv("LISPKIT_MEMORY") ? 
+void 
+gc_init()
+{
+  const unsigned  cell_size = sizeof(struct GCHeader) + sizeof(Object);
+  unsigned char  *ptr;
+  unsigned        num_cells;
+  int             i;
+
+  num_cells = getenv("LISPKIT_MEMORY") ?
     atoi(getenv("LISPKIT_MEMORY")) : NUM_CELLS;
 
   mem = calloc(num_cells, cell_size);
-  cells = calloc(num_cells, sizeof (Object *));
+  cells = calloc(num_cells, sizeof(Object *));
 
   alloc_counter = 0;
   collect_counter = 0;
 
   ff = NULL;
 
-  for(i = 0, ptr = mem; i < num_cells; i++, ptr += cell_size) {
-    cells[i] = (Object *) ((struct GCHeader *)ptr + 1);
+  for (i = 0, ptr = mem; i < num_cells; i++, ptr += cell_size) {
+    cells[i] = (Object *) ((struct GCHeader *) ptr + 1);
     cells[i]->Cons.cdr = ff;
     ff = cells[i];
   }
 }
 
-void gc_exit() {
+void 
+gc_exit()
+{
   free(mem);
   free(cells);
 }
 
-Object * gc_alloc() {
-  Object * object;
+Object         *
+gc_alloc()
+{
+  Object         *object;
   static unsigned _id = 0;
 
   if (ff == NULL) {
@@ -88,17 +96,19 @@ Object * gc_alloc() {
   }
   object = ff;
   ff = ff->Cons.cdr;
-  gc_header(object)->type = 0; 
-  gc_header(object)->id   = _id;
-  
+  gc_header(object)->type = 0;
+  gc_header(object)->id = _id;
+
   alloc_counter++;
 
   return object;
 }
 
-void gc_collect() {
-  int i;
-  for (i = 0; i < NUM_CELLS; i++ ) {
+void 
+gc_collect()
+{
+  int             i;
+  for (i = 0; i < NUM_CELLS; i++) {
     if (gc_header(cells[i])->marked == 0) {
       cells[i]->Cons.cdr = ff;
       ff = cells[i];
@@ -108,9 +118,11 @@ void gc_collect() {
   }
 }
 
-void gc_collect_garbage() {
-  int i;
-  for (i = 0; i < NUM_CELLS; i++ ) {
+void 
+gc_collect_garbage()
+{
+  int             i;
+  for (i = 0; i < NUM_CELLS; i++) {
     gc_header(cells[i])->marked = 0;
   }
   gc_mark(_stack);
@@ -130,8 +142,10 @@ void gc_collect_garbage() {
   }
 }
 
-void gc_stats() {
-  printf("allocated: %u\n", alloc_counter);
-  printf("collected: %u\n", collect_counter);
+void 
+gc_stats()
+{
+  printf("cells allocated: %u\n", alloc_counter);
+  printf("cells collected: %u\n", collect_counter);
 }
 

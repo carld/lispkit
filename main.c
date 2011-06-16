@@ -22,6 +22,7 @@
   TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
+/* vim: softtabstop=2 shiftwidth=2 expandtab  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,46 +31,57 @@
 #include "lispkit.h"
 #include "gc.h"
 
-const char help[] = "  lispkit [compiler] [file|--] \n";
+const char      help[] = "  lispkit [file] [ile|--] \n";
+int verbose = 0;
 
-int main(int argc, char *argv[]) {
-  int arg = 1;
-
-  FILE * fp[2];
-
-  Object *fn, *args, *result;
+int
+main(int argc, char *argv[], char *envp[])
+{
+  int             arg = 1;
+  FILE           *fp[2];
+  int             fpi = 0;
+  Object         *fn, *args, *result;
 
   if (argc < 2) {
-    puts(help); 
+    puts(help);
     exit(-1);
   }
 
-  for(arg = 1; arg < argc; arg++) {
-    fp[arg-1] = fopen(argv[arg], "ra");
-    if (fp[arg-1] == NULL || ferror(fp[arg-1]) != 0) {
-      printf("Could not load '%s' %s\n", argv[arg], strerror(errno));
-      exit(-1);
+  for (arg = 1; arg < argc; arg++) {
+    if (*(argv[arg]) == '-') {
+      if (*(argv[arg]+1) == 'v') {
+        verbose++;
+      }
+    } else {
+      fp[fpi] = fopen(argv[arg], "ra");
+      if (fp[fpi] == NULL || ferror(fp[fpi]) != 0) {
+        printf("Could not load '%s'\n", argv[arg]);
+        printf("%s\n", strerror(errno));
+        exit(-1);
+      }
+      fpi++;
     }
   }
 
   init();
 
-  fn = _nil; args = _nil; result = _nil;
-
-  fn   = get_exp(fp[0]);
-  args = get_exp_list(fp[1]);
-
+  fn     = get_exp(fp[0]);
+  args   = get_exp_list(fp[1]);
   result = execute(fn, args);
 
-  print(result); printf("\n");
+  print(result);
+  printf("\n");
 
   fclose(fp[0]);
   fclose(fp[1]);
+
+  if (verbose) {
+    gc_stats();
+  }
 
   gc_exit();
   intern_free();
 
   return 0;
 }
-
 
