@@ -222,11 +222,9 @@ Object * execute(Object *fn, Object *args) {
 
   stopped = 0;
 
-cycle:
-
-  op_code[number_value(car(_control))]();
-
-  if (!stopped) goto cycle;
+  for ( ; stopped == 0; ) {
+    op_code[number_value(car(_control))]();
+  }
 
   return _stack;
 }
