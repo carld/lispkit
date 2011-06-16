@@ -31,7 +31,10 @@
 #include "lispkit.h"
 #include "gc.h"
 
-const char      help[] = "  lispkit [file] [ile|--] \n";
+const char      help[] = 
+  "Usage: lispkit [option] [file] [file]\n"
+  "Example: lispkit compiler.ascii compiler.txt.ascii\n";
+
 int verbose = 0;
 
 int
