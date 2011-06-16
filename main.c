@@ -64,6 +64,7 @@ main(int argc, char *argv[], char *envp[])
         exit(-1);
       }
       fpi++;
+      fp[fpi] = stdin;
     }
   }
 
