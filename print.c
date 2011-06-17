@@ -30,24 +30,29 @@
 #include "lispkit.h"
 #include "gc.h"
 
-void print(Object *obj) {
-  if (!obj || obj == _nil) return;
+void 
+print(Object * obj)
+{
+  if (!obj || obj == _nil)
+    return;
 
   if (gc_header(obj)->type == NUMBER) {
     printf("%ld ", obj->Number.number);
   } else if (gc_header(obj)->type == SYMBOL) {
-    printf("%s ",  obj->Symbol.symbol);
+    printf("%s ", obj->Symbol.symbol);
   } else if (gc_header(obj)->type == CONS) {
     if (gc_header(car(obj))->type != CONS &&
-        gc_header(cdr(obj))->type != CONS &&
-        cdr(obj) != _nil) {
+	gc_header(cdr(obj))->type != CONS &&
+	cdr(obj) != _nil) {
       print(car(obj));
       printf(". ");
       print(cdr(obj));
     } else {
-      if (gc_header(car(obj))->type == CONS) printf("( ");
+      if (gc_header(car(obj))->type == CONS)
+	printf("( ");
       print(car(obj));
-      if (gc_header(car(obj))->type == CONS) printf(") ");
+      if (gc_header(car(obj))->type == CONS)
+	printf(") ");
       print(cdr(obj));
     }
   } else {
