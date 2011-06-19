@@ -1,5 +1,5 @@
 /*
-  A Lispkit Lisp implementation.
+  A Lispkit implementation.
 
   Copyright (c) 2011  A. Carl Douglas
 

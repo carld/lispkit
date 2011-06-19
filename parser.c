@@ -1,5 +1,5 @@
 /*
-  A Lispkit Lisp implementation.
+  A Lispkit implementation.
 
   Copyright (c) 2011  A. Carl Douglas
 
@@ -37,8 +37,8 @@
 
 extern struct Token token;
 
-Object *s_exp();
-Object *s_exp_list();
+Object * s_exp(void);
+Object * s_exp_list(void);
 
 enum { T_SYMBOL = 1, T_NUMBER = 2, T_DOT = 3, T_LEFTPAREN = 4, T_RIGHTPAREN = 5, T_END };
 

@@ -1,5 +1,5 @@
 /*
-  A Lispkit Lisp implementation.
+  A Lispkit implementation.
 
   Copyright (c) 2011  A. Carl Douglas
 
@@ -93,15 +93,11 @@ int is_cons(Object *obj) {
 }
 
 const char * string_value(Object *obj) {
-  static char buffer[64];
-  switch (gc_header(obj)->type) {
-    case SYMBOL: return obj->Symbol.symbol;
-    case NUMBER: printf("converting number to string...\n");
-                 snprintf(buffer, 64, "%d", number_value(obj)); return buffer;
+  if (gc_header(obj)->type != SYMBOL) {
+    printf("object is not a symbol\n");
+    exit(-1);
   }
-  printf("bad string value");
-  exit(-1);
-  return NULL;
+  return obj->Symbol.symbol;
 }
 
 int number_value(Object *obj) {

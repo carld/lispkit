@@ -1,5 +1,5 @@
 /*
-  A Lispkit Lisp implementation.
+  A Lispkit implementation.
 
   Copyright (c) 2011  A. Carl Douglas
 
@@ -42,7 +42,7 @@ int
 main(int argc, char *argv[], char *envp[])
 {
   int             arg = 1;
-  FILE           *fp[2];
+  FILE           *fp[2] = { NULL, NULL };
   int             fpi = 0;
   Object         *fn, *args, *result;
 

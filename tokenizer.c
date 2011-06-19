@@ -1,5 +1,5 @@
 /*
-  A Lispkit Lisp implementation.
+  A Lispkit implementation.
 
   Copyright (c) 2011  A. Carl Douglas
 
@@ -34,23 +34,27 @@
 #define MAX_TOKENS  16384
 
 char *token_stack[MAX_TOKENS];
-int cur_tok;
+int cur_tok = 0;
 
 struct Token token;
 
 void scanner(void) {
   token.token = token_stack[cur_tok++];
+  if (cur_tok >= MAX_TOKENS) {
+    printf("scanner is out of tokens %d/%d)\n", cur_tok, MAX_TOKENS);
+    exit(-1);
+  }
 }
 
 void tokenize (FILE *fp) {
   char line[255];
-  int stacki = 0;
-  int i;
+  int i = 0;
 
   cur_tok = 0;
   for (i = 0; i < MAX_TOKENS; i++) {
     token_stack[i] = NULL;
   }
+  i = 0;
   token.line = 0;
   while( fgets(line, 255, fp) ) {
     const char sep[] = " \n\r\t";
@@ -58,10 +62,10 @@ void tokenize (FILE *fp) {
     token.word = 1;
     token.line++;
     for (tok=strtok(line, sep); tok; tok=strtok(NULL,sep)) {
-      token_stack[stacki++] = strdup(tok);
+      token_stack[i++] = strdup(tok);
       token.word++;
-      if (stacki >= MAX_TOKENS) {
-        printf("out of token space\n");
+      if (i >= MAX_TOKENS) {
+        printf("out of token space %d/%d\n", i, MAX_TOKENS);
         exit(-1);
       }
     }
@@ -73,7 +77,7 @@ void tokenize (FILE *fp) {
 }
 
 void tokenizer_free(void) {
-  int i;
+  int i = 0;
   for (i = 0; i < MAX_TOKENS; i++) {
     if (token_stack[i] != NULL) {
       free(token_stack[i]);
