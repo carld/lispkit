@@ -33,7 +33,7 @@ $(BIN): $(OBJ)
 clean:
 	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o examples/*.o
 
-test:
+test: $(BIN)
 	./test.sh
 
 bootstrap:
