@@ -36,6 +36,12 @@ clean:
 test:
 	./test.sh
 
+bootstrap:
+	./$(BIN) compiler.ascii compiler.txt.ascii > .compiler.out.tmp
+	cat compiler.ascii | tr '\n' ' ' > .compiler.orig.tmp
+	diff -w .compiler.orig.tmp .compiler.out.tmp
+	rm .compiler.out.tmp .compiler.orig.tmp
+
 archive:
 	git archive --prefix=lispkit-$(SOURCE_ID)/ HEAD | gzip > lispkit-$(SOURCE_ID).tar.gz
 

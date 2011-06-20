@@ -42,7 +42,6 @@ print(Object * obj)
 {
   if (!obj 
       || obj == _nil 
-      || is_null(obj)
       )
     return;
 
