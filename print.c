@@ -26,14 +26,24 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "lispkit.h"
 #include "gc.h"
 
+int is_null(Object *obj) 
+{
+  return (gc_header(obj)->type == SYMBOL) 
+      && (strcmp(string_value(obj), string_value(_nil)) == 0);
+}
+
 void 
 print(Object * obj)
 {
-  if (!obj || obj == _nil)
+  if (!obj 
+      || obj == _nil 
+      || is_null(obj)
+      )
     return;
 
   if (gc_header(obj)->type == NUMBER) {
@@ -41,9 +51,10 @@ print(Object * obj)
   } else if (gc_header(obj)->type == SYMBOL) {
     printf("%s ", obj->Symbol.symbol);
   } else if (gc_header(obj)->type == CONS) {
-    if (gc_header(car(obj))->type != CONS &&
-	gc_header(cdr(obj))->type != CONS &&
-	cdr(obj) != _nil) {
+    if (gc_header(car(obj))->type != CONS 
+        && gc_header(cdr(obj))->type != CONS 
+        && !is_null(cdr(obj))
+	) {
       print(car(obj));
       printf(". ");
       print(cdr(obj));
