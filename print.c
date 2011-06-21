@@ -33,16 +33,15 @@
 
 int is_null(Object *obj) 
 {
-  return (gc_header(obj)->type == SYMBOL) 
-      && (strcmp(string_value(obj), string_value(_nil)) == 0);
+  return /* (obj == _nil) || */
+      (	(gc_header(obj)->type == SYMBOL) 
+     	 && (strcmp(string_value(obj), string_value(_nil)) == 0) );
 }
 
 void 
 print(Object * obj)
 {
-  if (!obj 
-      || obj == _nil 
-      )
+  if (!obj || obj == _nil )
     return;
 
   if (gc_header(obj)->type == NUMBER) {
@@ -63,7 +62,10 @@ print(Object * obj)
       print(car(obj));
       if (gc_header(car(obj))->type == CONS)
 	printf(") ");
-      print(cdr(obj));
+
+      if (!is_null(cdr(obj))) {
+     	print(cdr(obj));
+      }
     }
   } else {
     printf("Unknown type: %d\n", gc_header(obj)->type);

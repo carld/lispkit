@@ -36,6 +36,11 @@ clean:
 test: $(BIN)
 	./test.sh
 
+examples:
+	for d in `ls examples/*.lisp`; do \
+	  ./$(BIN) compiler.ascii $$d > $$d.o; \
+	done;
+
 bootstrap:
 	./$(BIN) compiler.ascii compiler.txt.ascii > .compiler.out.tmp
 	cat compiler.ascii | tr '\n' ' ' > .compiler.orig.tmp
@@ -45,5 +50,5 @@ bootstrap:
 archive:
 	git archive --prefix=lispkit-$(SOURCE_ID)/ HEAD | gzip > lispkit-$(SOURCE_ID).tar.gz
 
-.PHONY: clean all test archive
+.PHONY: clean all test archive examples
 
