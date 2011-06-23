@@ -1,0 +1,31 @@
+.\" groff -man -Tascii lispkit.1 | less
+.TH lispkit 1 "23 June 2011" "lispkit" 
+.SH "NAME"
+lispkit \- functional programming language
+.SH "SYNOPSIS"
+.B lispkit 
+.I function-file
+[
+.I arguments-file
+]
+.SH "DESCRIPTION"
+.B lispkit
+.SH "OPTIONS"
+.IP function-file
+A file containing lispkit machine code.
+.IP argument-file 
+A file containing lispkit arguments. 
+If not present, arguments can be entered through stdin.
+.SH "FILES"
+.IP compiler.lispkit.o
+.IP compiler.lispkit
+.SH "ENVIRONMENT"
+
+.SH "BUGS"
+
+.SH "AUTHOR"
+This program is based on the Lispkit described in
+"Functional Programming Application and Implementation", 
+by Peter Henderson (ISBN 0-13-331579-7).
+This Lispkit and man page by Carl Douglas (carl.douglas@gmail.com).
+
