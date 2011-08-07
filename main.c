@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <unistd.h>
 
 #include "lispkit.h"
 #include "gc.h"
@@ -36,35 +37,41 @@ const char      help[] =
   "Usage: lispkit [option] [file] [file]\n"
   "Example: lispkit compiler.ascii compiler.txt.ascii\n";
 
-int verbose = 0;
+int is_verbose = 0;
 
 int
 main(int argc, char *argv[], char *envp[])
 {
-  int             arg = 1;
-  FILE           *fp[2] = { NULL, NULL };
+  FILE           *fp[2];
   int             fpi = 0;
   Object         *fn, *args, *result;
+  int             ch, arg;
 
   if (argc < 2) {
     puts(help);
-    exit(-1);
+    return 0;
   }
 
-  for (arg = 1; arg < argc; arg++) {
-    if (*(argv[arg]) == '-') {
-      if (*(argv[arg]+1) == 'v') {
-        verbose++;
-      }
-    } else {
-      fp[fpi] = fopen(argv[arg], "ra");
-      if (fp[fpi] == NULL || ferror(fp[fpi]) != 0) {
-        printf("Could not load '%s'\n", argv[arg]);
-        printf("%s\n", strerror(errno));
-        exit(-1);
-      }
-      fpi++;
-      fp[fpi] = stdin;
+  while ((ch = getopt(argc, argv, "vh")) != -1) {
+    switch(ch) {
+      case 'h':
+        puts(help);
+        return 0;
+      case 'v':
+        is_verbose++;
+        break;
+      case '?':
+        return -1;
+    }
+  }
+
+  fp[0] = stdin;
+  fp[1] = stdin;
+
+  for(fpi = 0, arg = optind; (arg < argc) && (fpi < 2); arg++, fpi++) {
+    fp[fpi] = fopen(argv[arg], "ra");
+    if (fp[fpi] == NULL || ferror(fp[fpi]) != 0) {
+      printf("Could not load '%s': %s\n", argv[arg], strerror(errno));
     }
   }
 
@@ -80,7 +87,7 @@ main(int argc, char *argv[], char *envp[])
   fclose(fp[0]);
   fclose(fp[1]);
 
-  if (verbose) {
+  if (is_verbose) {
     gc_stats();
   }
 
