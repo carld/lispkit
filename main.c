@@ -28,6 +28,7 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "lispkit.h"
 #include "gc.h"
