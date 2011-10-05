@@ -35,6 +35,7 @@
 
 unsigned        alloc_counter;
 unsigned        collect_counter;
+unsigned        num_cells;
 
 void           *mem;
 Object        **cells;
@@ -57,7 +58,6 @@ gc_init()
 {
   const unsigned  cell_size = sizeof(struct GCHeader) + sizeof(Object);
   unsigned char  *ptr;
-  unsigned        num_cells;
   int             i;
 
   num_cells = getenv("LISPKIT_MEMORY") ?
@@ -145,7 +145,8 @@ gc_collect_garbage()
 void 
 gc_stats()
 {
-  printf("cells allocated: %u\n", alloc_counter);
-  printf("cells collected: %u\n", collect_counter);
+  printf("Cells:     %u\n", num_cells);
+  printf("Allocates: %u\n", alloc_counter);
+  printf("Collects:  %u\n", collect_counter);
 }
 
