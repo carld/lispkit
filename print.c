@@ -39,7 +39,7 @@ int is_null(Object *obj)
 }
 
 void 
-print(Object * obj)
+exp_print(Object * obj)
 {
   if (!obj || obj == _nil )
     return;
@@ -53,18 +53,18 @@ print(Object * obj)
         && gc_header(cdr(obj))->type != CONS 
         && !is_null(cdr(obj))
 	) {
-      print(car(obj));
+      exp_print(car(obj));
       printf(". ");
-      print(cdr(obj));
+      exp_print(cdr(obj));
     } else {
       if (gc_header(car(obj))->type == CONS)
 	printf("( ");
-      print(car(obj));
+      exp_print(car(obj));
       if (gc_header(car(obj))->type == CONS)
 	printf(") ");
 
       if (!is_null(cdr(obj))) {
-     	print(cdr(obj));
+     	exp_print(cdr(obj));
       }
     }
   } else {

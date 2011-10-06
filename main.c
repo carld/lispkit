@@ -82,7 +82,7 @@ main(int argc, char *argv[], char *envp[])
   args   = get_exp_list(fp[1]);
   result = execute(fn, args);
 
-  print(result);
+  exp_print(result);
   printf("\n");
 
   fclose(fp[0]);

@@ -72,7 +72,7 @@ Object * execute(Object *fn, Object *args);
 const char * intern_string(char *string);
 void intern_free(void);
 
-void print(Object *);
+void exp_print(Object *);
 const char * type_str(int);
 
 struct Token {
