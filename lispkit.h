@@ -73,6 +73,7 @@ const char * intern_string(char *string);
 void intern_free(void);
 
 void print(Object *);
+const char * type_str(int);
 
 struct Token {
   char * file;

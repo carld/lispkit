@@ -97,7 +97,7 @@ void scanner(void) {
   }
 }
 
-const char *type_str(int type) {
+const char *token_type_str(int type) {
   switch(type) {
     case T_SYMBOL: return "Symbol";
     case T_NUMBER: return "Number";
@@ -132,7 +132,7 @@ int token_type(void) {
 void match(int type) {
   if (type != token_type()) {
     printf("Error - did not expect token '%s'\n", token.token);
-    printf("Expected token type: %s\n", type_str(type));
+    printf("Expected token type: %s\n", token_type_str(type));
     printf("Line %d, column %d\n", token.line, token.pos);
     exit(-1);
   }

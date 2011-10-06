@@ -137,7 +137,7 @@ gc_collect_garbage()
   gc_collect();
 
   if (ff == NULL) {
-    printf("out of memory: %s", __func__);
+    printf("Out of memory");
     exit(-1);
   }
 }

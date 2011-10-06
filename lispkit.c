@@ -48,7 +48,8 @@ Object * cons(Object *_car, Object *_cdr) {
 
 Object * car(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("car error\n");
+    printf("CAR error, not possible on %s\n", 
+        type_str(gc_header(obj)->type));
     exit(-1);
   }
   return obj->Cons.car;
@@ -56,7 +57,8 @@ Object * car(Object *obj) {
 
 Object * cdr(Object *obj) {
   if (gc_header(obj)->type != CONS) {
-    printf("cdr error\n");
+    printf("CDR error, not possible on %s\n",
+        type_str(gc_header(obj)->type));
     exit(-1);
   }
   return obj->Cons.cdr;
@@ -94,7 +96,7 @@ int is_cons(Object *obj) {
 
 const char * string_value(Object *obj) {
   if (gc_header(obj)->type != SYMBOL) {
-    printf("object is not a symbol\n");
+    printf("Object is not a symbol\n");
     exit(-1);
   }
   return obj->Symbol.symbol;
@@ -102,11 +104,18 @@ const char * string_value(Object *obj) {
 
 int number_value(Object *obj) {
   if (gc_header(obj)->type != NUMBER) {
-    printf("object is not a number\n");
+    printf("Object is not a number\n");
     exit(-1);
   }
   return obj->Number.number;
 }
 
-
+const char * type_str(int type) {
+  switch(type) {
+    case CONS:   return "Cons";
+    case NUMBER: return "Number";
+    case SYMBOL: return "Symbol";
+  }
+  return "Unknown";
+}
 
