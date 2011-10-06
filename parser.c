@@ -37,6 +37,15 @@
  * <s-exp list> ::= <s-exp> | <s-exp> . <s-exp> | <s-exp> <s-exp list>
  */
 
+struct Token {
+  char * file;
+  char * token;
+  unsigned line;
+  unsigned pos;
+  unsigned word;
+};
+
+
 static FILE *parser_fp;
 static char token_space[MAX_TOKEN_LENGTH];
 static struct Token token;

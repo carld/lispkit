@@ -75,18 +75,6 @@ void intern_free(void);
 void exp_print(Object *);
 const char * type_str(int);
 
-struct Token {
-  char * file;
-  char * token;
-  unsigned line;
-  unsigned pos;
-  unsigned word;
-};
-
-void scanner(void);
-void tokenize(FILE *);
-void tokenizer_free(void);
-
 Object * get_exp(FILE *);
 Object * get_exp_list(FILE *);
 
