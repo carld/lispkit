@@ -41,7 +41,7 @@ const char      help[] =
 int is_verbose = 0;
 
 int
-main(int argc, char *argv[], char *envp[])
+main(int argc, char *argv[])
 {
   FILE           *fp[2];
   int             fpi = 0;
