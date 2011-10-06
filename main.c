@@ -73,6 +73,7 @@ main(int argc, char *argv[])
     fp[fpi] = fopen(argv[arg], "ra");
     if (fp[fpi] == NULL || ferror(fp[fpi]) != 0) {
       printf("Could not load '%s': %s\n", argv[arg], strerror(errno));
+      exit(-1);
     }
   }
 

@@ -27,10 +27,8 @@ You should see some output like:
   ( 3 ( 1 ( 0 . 0 ) 1 ( 0 . 0 ) 17 5 ) 4 21 )
 
 Then run it, with no second argument lispkit will read the input
-from stdin. Type a number e.g. 9, press enter, then ctrl-d, and
-the result will be printed to stdout:
+from stdin.
 
-  ./lispkit examples/square.o
-  9
-  81
+  echo 5 | ./lispkit examples/square.o
+  25
 
