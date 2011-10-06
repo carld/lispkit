@@ -35,14 +35,63 @@
  * <s-exp list> ::= <s-exp> | <s-exp> . <s-exp> | <s-exp> <s-exp list>
  */
 
-extern struct Token token;
+static FILE *parser_fp;
+static char token_space[80];
+static struct Token token;
 
-Object * s_exp(void);
-Object * s_exp_list(void);
+static Object * s_exp(void);
+static Object * s_exp_list(void);
 
-enum { T_SYMBOL = 1, T_NUMBER = 2, T_DOT = 3, T_LEFTPAREN = 4, T_RIGHTPAREN = 5, T_END };
+enum { T_SYMBOL = 1, 
+       T_NUMBER = 2, 
+       T_DOT = 3, 
+       T_LEFTPAREN = 4, 
+       T_RIGHTPAREN = 5, 
+       T_END };
 
-char *type_str(int type) {
+void start_scan(FILE *fp) {
+  parser_fp = fp;
+  token.line = 0;
+  token.pos  = 0;
+  token.word = 0;
+}
+
+void scanner(void) {
+  int ch, next_ch;
+  char *ptr = token_space;
+
+  token.token = NULL;
+  bzero(token_space, 80);
+
+  /* skip white space */
+  for( ; !feof(parser_fp); ) {
+    ch = fgetc(parser_fp);
+    if (!isspace(ch)) {
+      ungetc(ch, parser_fp);
+      break;
+    }
+  }
+
+  for ( ; !feof(parser_fp); ) {
+    ch = fgetc(parser_fp);
+    *ptr++ = (char)ch;
+    *ptr = '\0';
+    if (ch == '(' || ch == ')' || ch == '.') {
+      break;
+    }
+    next_ch = fgetc(parser_fp);
+    ungetc(next_ch, parser_fp);
+    if (isspace(next_ch) || next_ch == '(' || next_ch == ')' || next_ch == '.') {
+      break;
+    }
+  }
+
+  if (strlen(token_space) > 0) {
+    token.token = token_space;
+  }
+}
+
+const char *type_str(int type) {
   switch(type) {
     case T_SYMBOL: return "symbol";
     case T_NUMBER: return "number";
@@ -134,19 +183,17 @@ Object * s_exp_list(void) {
 
 Object * get_exp(FILE *fp) {
   Object *exp;
-  tokenize(fp);
+  start_scan(fp);
   scanner();
   exp = s_exp();
-  tokenizer_free();
   return exp;
 }
 
 Object * get_exp_list(FILE *fp) {
   Object *exp;
-  tokenize(fp);
+  start_scan(fp);
   scanner();
   exp = s_exp_list();
-  tokenizer_free();
   return exp;
 }
 

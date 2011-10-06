@@ -78,6 +78,7 @@ struct Token {
   char * file;
   char * token;
   unsigned line;
+  unsigned pos;
   unsigned word;
 };
 

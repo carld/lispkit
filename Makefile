@@ -13,7 +13,6 @@ CFLAGS += -D_BSD_SOURCE
 SRC     = gc.c secd.c lispkit.c print.c
 SRC    += parser.c
 SRC    += intern.c
-SRC    += tokenizer.c
 SRC    += main.c
 OBJ     = $(SRC:.c=.o)
 BIN     = lispkit
