@@ -68,7 +68,7 @@ print(Object * obj)
       }
     }
   } else {
-    printf("Unknown type: %d\n", gc_header(obj)->type);
+    printf("Unknown type: %s\n", type_str(gc_header(obj)->type));
     exit(-1);
   }
 }
