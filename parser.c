@@ -38,6 +38,7 @@
  */
 
 struct Token {
+  FILE *fp;
   char * file;
   char * token;
   unsigned line;
@@ -45,8 +46,6 @@ struct Token {
   unsigned word;
 };
 
-
-static FILE *parser_fp;
 static char token_space[MAX_TOKEN_LENGTH];
 static struct Token token;
 
@@ -61,7 +60,7 @@ enum { T_SYMBOL = 1,
        T_END };
 
 void start_scan(FILE *fp) {
-  parser_fp = fp;
+  token.fp   = fp;
   token.line = 0;
   token.pos  = 0;
   token.word = 0;
@@ -75,10 +74,10 @@ void scanner(void) {
   bzero(token_space, MAX_TOKEN_LENGTH);
 
   /* skip white space */
-  for( ; !feof(parser_fp); token.pos++) {
-    ch = fgetc(parser_fp);
+  for( ; !feof(token.fp); token.pos++) {
+    ch = fgetc(token.fp);
     if (!isspace(ch)) {
-      ungetc(ch, parser_fp);
+      ungetc(ch, token.fp);
       break;
     }
     if (ch == '\n') {
@@ -87,15 +86,15 @@ void scanner(void) {
     }
   }
 
-  for ( ; !feof(parser_fp); token.pos++) {
-    ch = fgetc(parser_fp);
+  for ( ; !feof(token.fp); token.pos++) {
+    ch = fgetc(token.fp);
     *ptr++ = (char)ch;
     *ptr = '\0';
     if (ch == '(' || ch == ')' || ch == '.') {
       break;
     }
-    next_ch = fgetc(parser_fp);
-    ungetc(next_ch, parser_fp);
+    next_ch = fgetc(token.fp);
+    ungetc(next_ch, token.fp);
     if (isspace(next_ch) || next_ch == '(' || next_ch == ')' || next_ch == '.') {
       break;
     }
