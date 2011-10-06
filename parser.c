@@ -30,13 +30,15 @@
 
 #include "lispkit.h"
 
+#define MAX_TOKEN_LENGTH  80
+
 /*
  * <s-exp> ::= <atom> | (<s-exp list>)
  * <s-exp list> ::= <s-exp> | <s-exp> . <s-exp> | <s-exp> <s-exp list>
  */
 
 static FILE *parser_fp;
-static char token_space[80];
+static char token_space[MAX_TOKEN_LENGTH];
 static struct Token token;
 
 static Object * s_exp(void);
@@ -61,18 +63,22 @@ void scanner(void) {
   char *ptr = token_space;
 
   token.token = NULL;
-  bzero(token_space, 80);
+  bzero(token_space, MAX_TOKEN_LENGTH);
 
   /* skip white space */
-  for( ; !feof(parser_fp); ) {
+  for( ; !feof(parser_fp); token.pos++) {
     ch = fgetc(parser_fp);
     if (!isspace(ch)) {
       ungetc(ch, parser_fp);
       break;
     }
+    if (ch == '\n') {
+      token.line++;
+      token.pos = 0;
+    }
   }
 
-  for ( ; !feof(parser_fp); ) {
+  for ( ; !feof(parser_fp); token.pos++) {
     ch = fgetc(parser_fp);
     *ptr++ = (char)ch;
     *ptr = '\0';
@@ -93,14 +99,14 @@ void scanner(void) {
 
 const char *type_str(int type) {
   switch(type) {
-    case T_SYMBOL: return "symbol";
-    case T_NUMBER: return "number";
-    case T_DOT: return "dot";
-    case T_LEFTPAREN: return "left paren";
-    case T_RIGHTPAREN: return "right paren";
-    case T_END: return "EOF";
+    case T_SYMBOL: return "Symbol";
+    case T_NUMBER: return "Number";
+    case T_DOT: return "Dot";
+    case T_LEFTPAREN: return "Left parenthesis";
+    case T_RIGHTPAREN: return "Right parenthesis";
+    case T_END: return "End of file";
   }
-  return "unknown";
+  return "Unknown token type";
 }
 
 int token_type(void) {
@@ -125,9 +131,9 @@ int token_type(void) {
 
 void match(int type) {
   if (type != token_type()) {
-    printf("Error - expected %d %s , got '%s'\n",
-        type, type_str(type), token.token);
-    printf("Line %d, word %d\n", token.line, token.word);
+    printf("Error - did not expect token '%s'\n", token.token);
+    printf("Expected token type: %s\n", type_str(type));
+    printf("Line %d, column %d\n", token.line, token.pos);
     exit(-1);
   }
   scanner();
@@ -152,8 +158,8 @@ Object * s_exp(void) {
     case T_END:
       break;
     default:
-      printf("%s:%d error, did not expect type %d %s\n",
-          __FILE__, __LINE__, token_type(), type_str(token_type()));
+      printf("Error - did not expect token '%s'\n", token.token);
+      printf("Line %d, column %d\n", token.line, token.pos);
       exit(-1);
   }
   return cell;
