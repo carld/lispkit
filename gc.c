@@ -89,7 +89,6 @@ Object         *
 gc_alloc()
 {
   Object         *object;
-  static unsigned _id = 0;
 
   if (ff == NULL) {
     gc_collect_garbage();
@@ -97,7 +96,6 @@ gc_alloc()
   object = ff;
   ff = ff->Cons.cdr;
   gc_header(object)->type = 0;
-  gc_header(object)->id = _id;
 
   alloc_counter++;
 

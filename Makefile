@@ -14,7 +14,9 @@ SRC     = gc.c secd.c lispkit.c print.c
 SRC    += parser.c
 SRC    += intern.c
 SRC    += main.c
+
 OBJ     = $(SRC:.c=.o)
+
 BIN     = lispkit
 
 all: $(BIN)
