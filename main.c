@@ -36,7 +36,7 @@
 const char      help[] = 
   "Lispkit (" __DATE__ " " __TIME__ ")\n"
   "Usage: lispkit [option] [file] [file]\n"
-  "Example: lispkit compiler.ascii compiler.txt.ascii\n";
+  "Example: lispkit compiler.ascii compiler.txt.ascii";
 
 int is_verbose = 0;
 
