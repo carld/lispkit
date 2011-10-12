@@ -38,7 +38,7 @@
  */
 
 struct Token {
-  FILE *fp;
+  FILE * fp;
   char * file;
   char * token;
   unsigned line;
@@ -48,6 +48,9 @@ struct Token {
 
 static char token_space[MAX_TOKEN_LENGTH];
 static struct Token token;
+
+static void start_scan(FILE *);
+static void scanner();
 
 static Object * s_exp(void);
 static Object * s_exp_list(void);
@@ -196,18 +199,14 @@ Object * s_exp_list(void) {
 }
 
 Object * get_exp(FILE *fp) {
-  Object *exp;
   start_scan(fp);
   scanner();
-  exp = s_exp();
-  return exp;
+  return s_exp();
 }
 
 Object * get_exp_list(FILE *fp) {
-  Object *exp;
   start_scan(fp);
   scanner();
-  exp = s_exp_list();
-  return exp;
+  return s_exp_list();
 }
 
