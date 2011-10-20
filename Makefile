@@ -10,9 +10,10 @@ CFLAGS += -g
 CFLAGS += -ggdb
 CFLAGS += -D_BSD_SOURCE
 CFLAGS += -pg
+CFLAGS += -fprofile-arcs -ftest-coverage
 
 LDFLAGS += -pg
-
+LDFLAGS += -fprofile-arcs -ftest-coverage
 
 SRC     = gc.c secd.c lispkit.c print.c
 SRC    += parser.c
