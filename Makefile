@@ -2,6 +2,9 @@
 
 SOURCE_ID  := $(shell date +%Y%m%d)
 
+PREFIX  = /usr/local
+MANDIR  = $(PREFIX)/share/man
+
 CC      = gcc
 CFLAGS += -Wall
 CFLAGS += -pedantic
@@ -24,6 +27,9 @@ OBJ     = $(SRC:.c=.o)
 
 BIN     = lispkit
 
+COMPILER_SRC = lispkit-compiler.lks
+COMPILER_BIN = lispkit-compiler.bin
+
 all: $(BIN)
 
 .c.o:
@@ -33,8 +39,31 @@ $(BIN): $(OBJ)
 	$(CC) -o $@ $^  $(LDFLAGS)
 	@size $(BIN)
 
+install: $(BIN) $(BIN)c
+	install -v $(BIN) $(PREFIX)/bin
+	install -v $(BIN)c $(PREFIX)/bin
+	install -v -d $(MANDIR)/man1
+	install -v -m 0644 lispkit.1 $(MANDIR)/man1
+	install -v -d $(PREFIX)/share/lispkit
+	install -v $(COMPILER_SRC) $(PREFIX)/share/lispkit
+	install -v $(COMPILER_BIN) $(PREFIX)/share/lispkit
+
+$(BIN)c: $(BIN)c.in
+	sed "s|COMPILER=|COMPILER=$(PREFIX)/share/lispkit/lispkit-compiler.bin|" lispkitc.in > $@
+
+uninstall:
+	rm -vf $(PREFIX)/bin/$(BIN)
+	rm -vf $(PREFIX)/bin/$(BIN)c
+	rm -vr $(MANDIR)/man1/lispkit.1
+	rm -vf $(PREFIX)/share/lispkit/$(COMPILER_SRC)
+	rm -vf $(PREFIX)/share/lispkit/$(COMPILER_BIN)
+	rm -vr $(PREFIX)/share/lispkit
+
+help:
+	groff -man -Tascii lispkit.1 | less -R
+
 %.o: %.lisp
-	./$(BIN) compiler.ascii $< | tee $@
+	./$(BIN) $(COMPILER_BIN) $< | tee $@
 
 clean:
 	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o examples/*.o
@@ -43,18 +72,18 @@ test: $(BIN)
 	./test.sh
 
 examples:
-	for d in `ls examples/*.lisp`; do \
-	  ./$(BIN) compiler.ascii $$d > $$d.o; \
+	for d in $(shell ls examples/*.lisp); do \
+	  ./$(BIN) $(COMPILER_BIN) $$d > $$d.o; \
 	done;
 
 bootstrap:
-	./$(BIN) compiler.ascii compiler.txt.ascii > .compiler.out.tmp
-	cat compiler.ascii | tr '\n' ' ' > .compiler.orig.tmp
+	./$(BIN) $(COMPILER_BIN) $(COMPILER_SRC) > .compiler.out.tmp
+	cat $(COMPILER_BIN) | tr '\n' ' ' > .compiler.orig.tmp
 	diff -w .compiler.orig.tmp .compiler.out.tmp
 	rm .compiler.out.tmp .compiler.orig.tmp
 
 archive:
 	git archive --prefix=lispkit-$(SOURCE_ID)/ HEAD | gzip > lispkit-$(SOURCE_ID).tar.gz
 
-.PHONY: clean all test archive examples
+.PHONY: clean all test archive examples bootstrap
 

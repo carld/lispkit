@@ -1,29 +1,49 @@
 .\" groff -man -Tascii lispkit.1 | less
 .TH lispkit 1 
 .SH "NAME"
-Lispkit \- a functional programming language similar to Lisp
+lispkit \- functional programming language interpreter
+.br
+lispkitc \- lispkit compiler script
 .SH "SYNOPSIS"
 .B lispkit 
-.I function-file
+.I program
 [
-.I arguments-file
+.I argument
+]
+.br
+.B lispkitc
+.I infile
+[
+.I outfile
 ]
 .SH "OPTIONS"
-.IP function-file
+.IP program
 A file containing lispkit machine code.
-.IP argument-file 
+.IP argument
 A file containing lispkit arguments. 
-If not present, arguments can be entered through stdin.
+If absent will read arguments from stdin.
+.IP infile
+A lispkit source file.
+.IP outfile
+A compiled lispkit program.
+If absent will write program to stdout.
+.SH "DESCRIPTION"
+Lispkit is a SECD based machine for interpreting 
+programs made up of symbolic expressions
+and simple functions such as cons, car, cdr, 
+similar to Lisp.
 .SH "FILES"
-.IP compiler
+.IP lispkit-compiler.bin
 Lispkit compiler in machine code form
-.IP compiler
+.IP lispkit-compiler.lks
 Lispkit compiler in source code form
 .SH "ENVIRONMENT"
 .B LISPKIT_MEMORY
+Maximum number of object cells that Lispkit will allocate.
 .SH "AUTHOR"
 This program is based on the Lispkit described in
 "Functional Programming Application and Implementation", 
 by Peter Henderson (ISBN 0-13-331579-7).
-This Lispkit and man page by A. Carl Douglas (carl.douglas@gmail.com).
+This Lispkit and man page by 
+A. Carl Douglas (carl.douglas@gmail.com).
 

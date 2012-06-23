@@ -13,22 +13,43 @@ attempt some of the examples from table 12.1 and 12.2 in the book.
 
   make test
 
-To compile a lispkit program, where [filename] is the name of 
-a file containing lispkit source code:
 
-  ./lispkit compiler.ascii [filename]
+INSTALLATION
+------------
 
-To compile one of the examples, examples/square.lisp:
+To install lispkit to your system:
 
-  make examples/square.o
+  [sudo] make install
 
-You should see some output like:
+To remove lispkit:
 
-  ( 3 ( 1 ( 0 . 0 ) 1 ( 0 . 0 ) 17 5 ) 4 21 )
+  [sudo] make uninstall
 
-Then run it, with no second argument lispkit will read the input
-from stdin.
 
-  echo 5 | ./lispkit examples/square.o
-  25
+USING
+-----
+
+To compile a lispkit program, use the lispkitc script:
+
+  lispkitc infile [outfile]
+
+
+For example:
+
+  lispkitc examples/square.lisp square.bin
+
+
+To run a lispkit program:
+
+  lispkit program [argument]
+
+
+If no argument file is given, lispkit will read from stdin.
+
+
+For example:
+
+  echo 16 | lispkit square.bin
+
+
 

@@ -1,0 +1,21 @@
+#!/bin/sh
+
+COMPILER=
+
+LISPKIT=$(which lispkit)
+
+if [[ $# == 0 ]]; then
+  echo lispkitc infile [outfile];
+  exit 0
+fi
+
+if [[ $LISPKIT == '' ]]; then
+  LISPKIT=./lispkit
+fi
+
+if [[ $2 != '' ]]; then
+  $LISPKIT $COMPILER $1 > $2
+else
+  $LISPKIT $COMPILER $1
+fi
+
