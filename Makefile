@@ -30,7 +30,7 @@ BIN     = lispkit
 COMPILER_SRC = lispkit-compiler.lks
 COMPILER_BIN = lispkit-compiler.bin
 
-all: $(BIN)
+all: $(BIN) $(BIN)c
 
 .c.o:
 	$(CC) -c $(CFLAGS) $<
@@ -49,7 +49,7 @@ install: $(BIN) $(BIN)c
 	install -v $(COMPILER_BIN) $(PREFIX)/share/lispkit
 
 $(BIN)c: $(BIN)c.in
-	sed "s|COMPILER=|COMPILER=$(PREFIX)/share/lispkit/lispkit-compiler.bin|" lispkitc.in > $@
+	sed "s|COMPILER=|COMPILER=$(PREFIX)/share/lispkit/$(COMPILER_BIN)|" lispkitc.in > $@
 
 uninstall:
 	rm -vf $(PREFIX)/bin/$(BIN)
@@ -66,7 +66,7 @@ help:
 	./$(BIN) $(COMPILER_BIN) $< | tee $@
 
 clean:
-	rm -f $(OBJ) $(BIN) *.gcda *.gcno *.gcov *.o examples/*.o
+	rm -f $(OBJ) $(BIN) $(BIN)c *.gcda *.gcno *.gcov *.o examples/*.o
 
 test: $(BIN)
 	./test.sh
