@@ -49,7 +49,8 @@ install: $(BIN) $(BIN)c
 	install -v $(COMPILER_BIN) $(PREFIX)/share/lispkit
 
 $(BIN)c: $(BIN)c.in
-	sed "s|COMPILER=|COMPILER=$(PREFIX)/share/lispkit/$(COMPILER_BIN)|" lispkitc.in > $@
+	sed "s|__COMPILER__=|COMPILER=$(PREFIX)/share/lispkit/$(COMPILER_BIN)|" lispkitc.in > $@
+	chmod +x $@
 
 uninstall:
 	rm -vf $(PREFIX)/bin/$(BIN)

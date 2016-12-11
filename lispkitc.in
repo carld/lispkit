@@ -1,6 +1,10 @@
 #!/bin/sh
 
-COMPILER=
+__COMPILER__=
+
+if [[ ! -f $COMPILER ]]; then
+  COMPILER=compiler.secd
+fi
 
 LISPKIT=$(which lispkit)
 

@@ -1,7 +1,7 @@
 
 This program is an implementation of the Lispkit described in the 
 book "FUNCTIONAL PROGRAMMING: Application and Implementation", by
-Peter Henderson, ISBN 0-13-331579-7.
+Peter Henderson, ISBN 0-13-331579-7, Prentice-Hall International, 1980.
 
 If you have a C compiler and make, like gcc and gmake, you can
  build the program with:
@@ -36,7 +36,7 @@ To compile a lispkit program, use the lispkitc script:
 
 For example:
 
-  lispkitc examples/square.lisp square.bin
+  ./lispkitc examples/square.lisp square.bin
 
 
 To run a lispkit program:
@@ -49,7 +49,7 @@ If no argument file is given, lispkit will read from stdin.
 
 For example:
 
-  echo 16 | lispkit square.bin
+  echo 16 | ./lispkit square.bin
 
 
 
