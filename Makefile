@@ -27,8 +27,8 @@ OBJ     = $(SRC:.c=.o)
 
 BIN     = lispkit
 
-COMPILER_SRC = lispkit-compiler.lks
-COMPILER_BIN = lispkit-compiler.bin
+COMPILER_SRC = compiler.lisp
+COMPILER_BIN = compiler.secd
 
 all: $(BIN) $(BIN)c
 
