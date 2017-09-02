@@ -31,7 +31,7 @@
 #include "lispkit.h"
 #include "gc.h"
 
-#define NUM_CELLS    16384
+#define NUM_CELLS    65535
 
 unsigned        alloc_counter;
 unsigned        collect_counter;
