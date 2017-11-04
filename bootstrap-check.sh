@@ -2,13 +2,20 @@
 
 #  Po = m(Co, Ps)
 #  Co = m(Co, Cs)
+#
+#  Po = Program object
+#  Co = Compiler object
+#  Cs = Compiler source
+#  Ps = Program source
 
 LISPKIT=./lispkit
+COMPILER=compiler.secd
+SOURCE=compiler.lisp
 
 function m {
-  Co=$1
-  Ps=$2
-  Po=$3
+  local Co=$1
+  local Ps=$2
+  local Po=$3
   $LISPKIT $Co $Ps | fmt -w 80 > $Po
 }
 
@@ -20,18 +27,20 @@ function d {
   fi
 }
 
-cat compiler.lisp | tr '\n' ' ' | fmt -w 80 > compiler1.lisp
-cat compiler.secd | tr '\n' ' ' | fmt -w 80 > compiler1.secd
+function bootstrap {
+  local Co=$1
+  local Ps=$2
+  local Po=${Ps/.lisp/.secd}
+  local CPo=${Po}.bootstrap
+  m $Co $Ps $Po
+  m $Po $Ps $CPo
+  d $Po $CPo
+  echo "Bootstrap OK"
+}
 
-m "compiler1.secd" "compiler1.lisp" "compiler1.secd.out"
-d "compiler1.secd" "compiler1.secd.out"
-echo "1 OK"
-m "compiler1.secd" "compiler2.lisp" "compiler2.secd"
-m "compiler2.secd" "compiler2.lisp" "compiler2.secd.out"
-d "compiler2.secd" "compiler2.secd.out"
-echo "2 OK"
-m "compiler2.secd" "compiler3.lisp" "compiler3.secd"
-m "compiler3.secd" "compiler3.lisp" "compiler3.secd.out"
-d "compiler3.secd" "compiler3.secd.out"
-echo "3 OK"
+cat $COMPILER | tr '\n' ' ' | fmt -w 80 > compiler0.secd
+cat $SOURCE | tr '\n' ' ' | fmt -w 80 > compiler1.lisp
 
+bootstrap compiler0.secd compiler1.lisp
+bootstrap compiler1.secd compiler2.lisp
+bootstrap compiler2.secd compiler3.lisp
