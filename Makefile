@@ -83,6 +83,14 @@ bootstrap:
 	diff -w .compiler.orig.tmp .compiler.out.tmp
 	rm .compiler.out.tmp .compiler.orig.tmp
 
+compiler%.secd: PARENT=compiler$$(($* - 1)).secd
+compiler%.secd: compiler%.lisp $(PARENT) $(BIN)
+	./$(BIN) $(PARENT) $< | fmt -w 80 > $@
+	./$(BIN) $@ $< | fmt -w 80 > $@.bootstrap
+	diff -y -d $@ $@.bootstrap
+
+compilers: $(addsuffix .secd, $(basename $(wildcard compiler*.lisp)))
+
 archive:
 	git archive --prefix=lispkit-$(SOURCE_ID)/ HEAD | gzip > lispkit-$(SOURCE_ID).tar.gz
 

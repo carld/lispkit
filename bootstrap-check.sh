@@ -32,15 +32,15 @@ function bootstrap {
   local Ps=$2
   local Po=${Ps/.lisp/.secd}
   local CPo=${Po}.bootstrap
-  m $Co $Ps $Po
-  m $Po $Ps $CPo
-  d $Po $CPo
+  m $Co $Ps $Po    # compile compiler with earlier compiler
+  m $Po $Ps $CPo   # compile compiler with itself
+  d $Po $CPo       # compare the results of above two
   echo "Bootstrap OK"
 }
 
 cat $COMPILER | tr '\n' ' ' | fmt -w 80 > compiler0.secd
 cat $SOURCE | tr '\n' ' ' | fmt -w 80 > compiler1.lisp
 
-bootstrap compiler0.secd compiler1.lisp
-bootstrap compiler1.secd compiler2.lisp
-bootstrap compiler2.secd compiler3.lisp
+for n in $(seq 0 2); do
+  bootstrap compiler$n.secd compiler$((n + 1)).lisp
+done
