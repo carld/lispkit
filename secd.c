@@ -67,6 +67,7 @@ void _ld() {
   _work    = car(_work);
   _stack   = cons(_work, _stack);
   _control = cdr(cdr(_control));
+  _work    = _nil;
 }
 
 void _car() {
@@ -138,8 +139,11 @@ void _eq() {
 }
 
 void _ldf() {
-  _stack = cons(cons(car(cdr(_control)), _environ), _stack);
+  _work = cons(car(cdr(_control)), _environ);
+  _stack = cons(_work, _stack);
+  _environ = cdr(_environ);
   _control = cdr(cdr(_control));
+  _work = _nil;
 }
 
 void _rtn() {
@@ -155,7 +159,9 @@ void _dum() {
 }
 
 void _rap() {
-  _dump         = cons(cdr(cdr(_stack)), cons(cdr(_environ), cons(cdr(_control),_dump)));
+  _dump         = cons(cdr(_control),_dump);
+  _dump         = cons(cdr(_environ), _dump);
+  _dump         = cons(cdr(cdr(_stack)), _dump);
   _environ      = cdr(car(_stack));
   _environ->Cons.car = car(cdr(_stack));
   _control      = car(car(_stack));
@@ -178,7 +184,9 @@ void _join() {
 }
 
 void _ap() {
-  _dump    = cons(cdr(cdr(_stack)),cons(_environ,cons(cdr(_control), _dump)));
+  _dump    = cons(cdr(_control), _dump);
+  _dump    = cons(_environ, _dump);
+  _dump    = cons(cdr(cdr(_stack)), _dump);
   _environ = cons(car(cdr(_stack)),cdr(car(_stack)));
   _control = car(car(_stack));
   _stack   = _nil;
