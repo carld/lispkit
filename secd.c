@@ -141,7 +141,6 @@ void _eq() {
 void _ldf() {
   _work = cons(car(cdr(_control)), _environ);
   _stack = cons(_work, _stack);
-  _environ = cdr(_environ);
   _control = cdr(cdr(_control));
   _work = _nil;
 }
