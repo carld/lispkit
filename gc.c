@@ -58,7 +58,7 @@ gc_init()
 {
   const unsigned  cell_size = sizeof(struct GCHeader) + sizeof(Object);
   unsigned char  *ptr;
-  int             i;
+  unsigned        i;
 
   num_cells = getenv("LISPKIT_MEMORY") ?
     atoi(getenv("LISPKIT_MEMORY")) : NUM_CELLS;
