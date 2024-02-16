@@ -33,13 +33,13 @@ struct GCHeader {
   int id;
 };
 
-void gc_init();
-Object * gc_alloc();
-void gc_collect_garbage();
-void gc_collect();
-void gc_mark();
-void gc_exit();
-void gc_stats();
+void gc_init(void);
+Object * gc_alloc(void);
+void gc_collect_garbage(void);
+void gc_collect(void);
+void gc_mark(Object *);
+void gc_exit(void);
+void gc_stats(void);
 
 #define gc_header(o)  ((struct GCHeader *)o - 1)
 

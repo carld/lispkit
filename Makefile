@@ -5,7 +5,7 @@ SOURCE_ID  := $(shell date +%Y%m%d)
 PREFIX  = /usr/local
 MANDIR  = $(PREFIX)/share/man
 
-CC      = gcc
+#CC      = gcc
 CFLAGS += -Wall
 CFLAGS += -pedantic
 CFLAGS += -ansi
@@ -36,7 +36,7 @@ all: $(BIN) $(BIN)c
 	$(CC) -c $(CFLAGS) $<
 
 $(BIN): $(OBJ)
-	$(CC) -o $@ $^  $(LDFLAGS)
+	$(CC) -o $@ $(OBJ)  $(LDFLAGS)
 	@size $(BIN)
 
 install: $(BIN) $(BIN)c

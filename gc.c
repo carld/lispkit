@@ -54,7 +54,7 @@ gc_mark(Object * object)
 }
 
 void 
-gc_init()
+gc_init(void)
 {
   const unsigned  cell_size = sizeof(struct GCHeader) + sizeof(Object);
   unsigned char  *ptr;
@@ -79,14 +79,14 @@ gc_init()
 }
 
 void 
-gc_exit()
+gc_exit(void)
 {
   free(mem);
   free(cells);
 }
 
 Object         *
-gc_alloc()
+gc_alloc(void)
 {
   Object         *object;
 
@@ -103,7 +103,7 @@ gc_alloc()
 }
 
 void 
-gc_collect()
+gc_collect(void)
 {
   int             i;
   for (i = 0; i < NUM_CELLS; i++) {
@@ -117,7 +117,7 @@ gc_collect()
 }
 
 void 
-gc_collect_garbage()
+gc_collect_garbage(void)
 {
   int             i;
   for (i = 0; i < NUM_CELLS; i++) {
@@ -141,7 +141,7 @@ gc_collect_garbage()
 }
 
 void 
-gc_stats()
+gc_stats(void)
 {
   printf("Cells:     %u\n", num_cells);
   printf("Allocates: %u\n", alloc_counter);

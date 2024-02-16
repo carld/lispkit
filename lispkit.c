@@ -34,7 +34,7 @@
 #include "gc.h"
 
 
-Object * object_alloc() {
+Object * object_alloc(void) {
   return gc_alloc();
 }
 

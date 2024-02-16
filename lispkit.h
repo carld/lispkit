@@ -66,7 +66,7 @@ int is_number(Object *);
 int is_symbol(Object *);
 int is_atom(Object *);
 
-void init();
+void init(void);
 Object * execute(Object *fn, Object *args);
 
 const char * intern_string(char *string);

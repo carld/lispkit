@@ -48,12 +48,12 @@ Object *_work;
 static int stopped = 0;
 
 
-void _ldc() {
+void _ldc(void) {
   _stack   = cons(car(cdr(_control)), _stack);
   _control = cdr(cdr(_control));
 }
 
-void _ld() {
+void _ld(void) {
   int i = 0;
   _work    = _environ;
 
@@ -70,17 +70,17 @@ void _ld() {
   _work    = _nil;
 }
 
-void _car() {
+void _car(void) {
   _stack   = cons(car(car(_stack)), cdr(_stack));
   _control = cdr(_control);
 }
 
-void _cdr() {
+void _cdr(void) {
   _stack   = cons(cdr(car(_stack)), cdr(_stack));
   _control = cdr(_control);
 }
 
-void _atom() {
+void _atom(void) {
   if (is_number(car(_stack)) || is_symbol(car(_stack))) {
     _stack = cons(_true, cdr(_stack));
   } else {
@@ -89,37 +89,37 @@ void _atom() {
   _control = cdr(_control);
 }
 
-void _cons() {
+void _cons(void) {
   _stack   = cons(cons(car(_stack),car(cdr(_stack))),cdr(cdr(_stack)));
   _control = cdr(_control);
 }
 
-void _sub() {
+void _sub(void) {
   _stack   = cons(number(number_value(car(cdr(_stack))) - number_value(car(_stack))),cdr(cdr(_stack)));
   _control = cdr(_control);
 }
 
-void _add() {
+void _add(void) {
   _stack   = cons(number(number_value(car(cdr(_stack))) + number_value(car(_stack))),cdr(cdr(_stack)));
   _control = cdr(_control);
 }
 
-void _mul() {
+void _mul(void) {
   _stack   = cons(number(number_value(car(cdr(_stack))) * number_value(car(_stack))),cdr(cdr(_stack)));
   _control = cdr(_control);
 }
 
-void _div() {
+void _div(void) {
   _stack   = cons(number(number_value(car(cdr(_stack))) / number_value(car(_stack))),cdr(cdr(_stack)));
   _control = cdr(_control);
 }
 
-void _rem() {
+void _rem(void) {
   _stack   = cons(number(number_value(car(cdr(_stack))) % number_value(car(_stack))),cdr(cdr(_stack)));
   _control = cdr(_control);
 }
 
-void _leq() {
+void _leq(void) {
   if (number_value(car(cdr(_stack))) <= number_value(car(_stack))) {
     _stack = cons(_true, cdr(cdr(_stack)));
   } else {
@@ -128,7 +128,7 @@ void _leq() {
   _control = cdr(_control);
 }
 
-void _eq() {
+void _eq(void) {
   if ((is_symbol(car(_stack)) && is_symbol(car(cdr(_stack))) && (strcmp(string_value(car(_stack)), string_value(car(cdr(_stack)))) == 0)) ||
     (is_number(car(_stack)) && is_number(car(cdr(_stack))) && number_value(car(_stack)) == number_value(car(cdr(_stack))))) {
     _stack = cons(_true, cdr(cdr(_stack)));
@@ -138,26 +138,26 @@ void _eq() {
   _control = cdr(_control);
 }
 
-void _ldf() {
+void _ldf(void) {
   _work = cons(car(cdr(_control)), _environ);
   _stack = cons(_work, _stack);
   _control = cdr(cdr(_control));
   _work = _nil;
 }
 
-void _rtn() {
+void _rtn(void) {
   _stack   = cons(car(_stack), car(_dump));
   _environ = car(cdr(_dump));
   _control = car(cdr(cdr(_dump)));
   _dump    = cdr(cdr(cdr(_dump)));
 }
 
-void _dum() {
+void _dum(void) {
   _environ = cons(_nil, _environ);
   _control = cdr(_control);
 }
 
-void _rap() {
+void _rap(void) {
   _dump         = cons(cdr(_control),_dump);
   _dump         = cons(cdr(_environ), _dump);
   _dump         = cons(cdr(cdr(_stack)), _dump);
@@ -167,7 +167,7 @@ void _rap() {
   _stack        = _nil;
 }
 
-void _sel() {
+void _sel(void) {
   _dump = cons(cdr(cdr(cdr(_control))),_dump);
   if (strcmp(string_value(car(_stack)), string_value(_true)) == 0) {
     _control = car(cdr(_control));
@@ -177,12 +177,12 @@ void _sel() {
   _stack   = cdr(_stack);
 }
 
-void _join() {
+void _join(void) {
   _control = car(_dump);
   _dump    = cdr(_dump);
 }
 
-void _ap() {
+void _ap(void) {
   _dump    = cons(cdr(_control), _dump);
   _dump    = cons(_environ, _dump);
   _dump    = cons(cdr(cdr(_stack)), _dump);
@@ -191,7 +191,7 @@ void _ap() {
   _stack   = _nil;
 }
 
-void _stop() {
+void _stop(void) {
   stopped = 1;
 }
 
@@ -236,7 +236,7 @@ Object * execute(Object *fn, Object *args) {
   return _stack;
 }
 
-void init() {
+void init(void) {
   gc_init();
 
   _true     = symbol("T");

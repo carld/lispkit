@@ -51,7 +51,7 @@ static char token_space[MAX_TOKEN_LENGTH];
 static struct Token token;
 
 static void start_scan(FILE *);
-static void scanner();
+static void scanner(void);
 
 static Object * s_exp(void);
 static Object * s_exp_list(void);
